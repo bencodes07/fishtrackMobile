@@ -7,12 +7,15 @@
 
 import SwiftUI
 
-struct Category: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
+struct Category: Identifiable {
+    var id: String = UUID().uuidString
+    var image: String
+    var title: String
 }
 
-#Preview {
-    Category()
-}
+var categories = [
+    Category(image: "test", title: "Test"),
+    Category(image: "test", title: "Test"),
+    Category(image: "test", title: "Test"),
+    Category(image: "test", title: "Test")
+]

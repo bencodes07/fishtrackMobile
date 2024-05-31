@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B37A2DBA2C0A42E400E300E0 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37A2DB92C0A42E400E300E0 /* Category.swift */; };
+		B3CD174B2C0A897B00414A0F /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CD174A2C0A897B00414A0F /* CustomTabBar.swift */; };
+		B3CD174D2C0A8FBF00414A0F /* AddFish.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CD174C2C0A8FBF00414A0F /* AddFish.swift */; };
+		B3CD174F2C0A8FE100414A0F /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CD174E2C0A8FE100414A0F /* Settings.swift */; };
 		B3D07B922C0A24E1007B3B89 /* fishtrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07B912C0A24E1007B3B89 /* fishtrackApp.swift */; };
 		B3D07B942C0A24E1007B3B89 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07B932C0A24E1007B3B89 /* ContentView.swift */; };
 		B3D07B962C0A24E1007B3B89 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07B952C0A24E1007B3B89 /* Item.swift */; };
@@ -15,6 +19,7 @@
 		B3D07BA52C0A24E3007B3B89 /* fishtrackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07BA42C0A24E3007B3B89 /* fishtrackTests.swift */; };
 		B3D07BAF2C0A24E3007B3B89 /* fishtrackUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07BAE2C0A24E3007B3B89 /* fishtrackUITests.swift */; };
 		B3D07BB12C0A24E3007B3B89 /* fishtrackUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07BB02C0A24E3007B3B89 /* fishtrackUITestsLaunchTests.swift */; };
+		B3D07BC42C0A26C8007B3B89 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07BC32C0A26C8007B3B89 /* Home.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +40,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B37A2DB92C0A42E400E300E0 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		B3CD174A2C0A897B00414A0F /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
+		B3CD174C2C0A8FBF00414A0F /* AddFish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFish.swift; sourceTree = "<group>"; };
+		B3CD174E2C0A8FE100414A0F /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		B3D07B8E2C0A24E1007B3B89 /* fishtrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fishtrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D07B912C0A24E1007B3B89 /* fishtrackApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fishtrackApp.swift; sourceTree = "<group>"; };
 		B3D07B932C0A24E1007B3B89 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -46,6 +55,7 @@
 		B3D07BAA2C0A24E3007B3B89 /* fishtrackUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = fishtrackUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D07BAE2C0A24E3007B3B89 /* fishtrackUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fishtrackUITests.swift; sourceTree = "<group>"; };
 		B3D07BB02C0A24E3007B3B89 /* fishtrackUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fishtrackUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		B3D07BC32C0A26C8007B3B89 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,11 +106,14 @@
 		B3D07B902C0A24E1007B3B89 /* fishtrack */ = {
 			isa = PBXGroup;
 			children = (
+				B3D07BBE2C0A2677007B3B89 /* View */,
+				B3D07BBD2C0A2671007B3B89 /* Model */,
 				B3D07B912C0A24E1007B3B89 /* fishtrackApp.swift */,
 				B3D07B932C0A24E1007B3B89 /* ContentView.swift */,
 				B3D07B952C0A24E1007B3B89 /* Item.swift */,
 				B3D07B972C0A24E3007B3B89 /* Assets.xcassets */,
 				B3D07B992C0A24E3007B3B89 /* Preview Content */,
+				B3CD174A2C0A897B00414A0F /* CustomTabBar.swift */,
 			);
 			path = fishtrack;
 			sourceTree = "<group>";
@@ -128,6 +141,24 @@
 				B3D07BB02C0A24E3007B3B89 /* fishtrackUITestsLaunchTests.swift */,
 			);
 			path = fishtrackUITests;
+			sourceTree = "<group>";
+		};
+		B3D07BBD2C0A2671007B3B89 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				B37A2DB92C0A42E400E300E0 /* Category.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		B3D07BBE2C0A2677007B3B89 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B3D07BC32C0A26C8007B3B89 /* Home.swift */,
+				B3CD174C2C0A8FBF00414A0F /* AddFish.swift */,
+				B3CD174E2C0A8FE100414A0F /* Settings.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,7 +292,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3D07B942C0A24E1007B3B89 /* ContentView.swift in Sources */,
+				B37A2DBA2C0A42E400E300E0 /* Category.swift in Sources */,
+				B3CD174F2C0A8FE100414A0F /* Settings.swift in Sources */,
 				B3D07B962C0A24E1007B3B89 /* Item.swift in Sources */,
+				B3D07BC42C0A26C8007B3B89 /* Home.swift in Sources */,
+				B3CD174B2C0A897B00414A0F /* CustomTabBar.swift in Sources */,
+				B3CD174D2C0A8FBF00414A0F /* AddFish.swift in Sources */,
 				B3D07B922C0A24E1007B3B89 /* fishtrackApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -426,6 +462,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fishtrack/Preview Content\"";
+				DEVELOPMENT_TEAM = PZ7QLS8852;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -433,6 +470,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -454,6 +492,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fishtrack/Preview Content\"";
+				DEVELOPMENT_TEAM = PZ7QLS8852;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -461,6 +500,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
