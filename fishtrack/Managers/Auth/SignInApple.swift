@@ -5,8 +5,7 @@
 //  Created by Ben Böckmann on 01.06.24.
 //
 
-import Foundation
-import Crypto
+import CryptoKit
 import AuthenticationServices
 
 struct SignInAppleResult {
@@ -39,7 +38,7 @@ class SignInApple: NSObject {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         request.requestedScopes = [.fullName, .email]
-        request.nonce = sha256(nonce)
+        request.nonce = self.sha256(nonce)
 
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = self

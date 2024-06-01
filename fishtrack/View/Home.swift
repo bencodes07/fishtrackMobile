@@ -22,6 +22,18 @@ struct Home: View {
                 
                 Spacer()
                 
+                Button(action: {
+                    Task {
+                        do {
+                            try await AuthManager.shared.signOut()
+                        } catch {
+                            print("error while signing out")
+                        }
+                    }
+                }, label: {
+                    Text("Sign out").foregroundColor(.red)
+                })
+                
                 Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
                     Image(systemName: "circle.grid.2x2")
                         .font(.title2)

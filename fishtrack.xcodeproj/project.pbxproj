@@ -7,13 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B367A47E2C0B60AF0073F75F /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B367A47D2C0B60AF0073F75F /* AuthManager.swift */; };
+		B367A4812C0B62D30073F75F /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = B367A4802C0B62D30073F75F /* Auth */; };
+		B367A4832C0B62D30073F75F /* Functions in Frameworks */ = {isa = PBXBuildFile; productRef = B367A4822C0B62D30073F75F /* Functions */; };
+		B367A4852C0B62D30073F75F /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = B367A4842C0B62D30073F75F /* PostgREST */; };
+		B367A4872C0B62D30073F75F /* Realtime in Frameworks */ = {isa = PBXBuildFile; productRef = B367A4862C0B62D30073F75F /* Realtime */; };
+		B367A4892C0B62D30073F75F /* Storage in Frameworks */ = {isa = PBXBuildFile; productRef = B367A4882C0B62D30073F75F /* Storage */; };
+		B367A48B2C0B62D30073F75F /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = B367A48A2C0B62D30073F75F /* Supabase */; };
+		B367A48D2C0B64160073F75F /* SignInApple.swift in Sources */ = {isa = PBXBuildFile; fileRef = B367A48C2C0B64160073F75F /* SignInApple.swift */; };
 		B37A2DBA2C0A42E400E300E0 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37A2DB92C0A42E400E300E0 /* Category.swift */; };
+		B3967B3C2C0BA0390034161F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B3967B3B2C0BA0390034161F /* GoogleSignIn */; };
+		B3967B3E2C0BA0390034161F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B3967B3D2C0BA0390034161F /* GoogleSignInSwift */; };
+		B3967B412C0BB0E10034161F /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3967B402C0BB0E10034161F /* SignInViewModel.swift */; };
+		B3967B462C0BBA7B0034161F /* SignInGoogle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3967B452C0BBA7A0034161F /* SignInGoogle.swift */; };
+		B3967B4A2C0BBF330034161F /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3967B492C0BBF330034161F /* SignUp.swift */; };
 		B3CD174B2C0A897B00414A0F /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CD174A2C0A897B00414A0F /* CustomTabBar.swift */; };
 		B3CD174D2C0A8FBF00414A0F /* AddFish.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CD174C2C0A8FBF00414A0F /* AddFish.swift */; };
 		B3CD174F2C0A8FE100414A0F /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CD174E2C0A8FE100414A0F /* Settings.swift */; };
 		B3D07B922C0A24E1007B3B89 /* fishtrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07B912C0A24E1007B3B89 /* fishtrackApp.swift */; };
 		B3D07B942C0A24E1007B3B89 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07B932C0A24E1007B3B89 /* ContentView.swift */; };
-		B3D07B962C0A24E1007B3B89 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07B952C0A24E1007B3B89 /* Item.swift */; };
 		B3D07B982C0A24E3007B3B89 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3D07B972C0A24E3007B3B89 /* Assets.xcassets */; };
 		B3D07B9B2C0A24E3007B3B89 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3D07B9A2C0A24E3007B3B89 /* Preview Assets.xcassets */; };
 		B3D07BA52C0A24E3007B3B89 /* fishtrackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07BA42C0A24E3007B3B89 /* fishtrackTests.swift */; };
@@ -40,14 +52,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B367A47D2C0B60AF0073F75F /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		B367A48C2C0B64160073F75F /* SignInApple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInApple.swift; sourceTree = "<group>"; };
+		B367A48E2C0B75E40073F75F /* fishtrack.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = fishtrack.entitlements; sourceTree = "<group>"; };
 		B37A2DB92C0A42E400E300E0 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		B3967B402C0BB0E10034161F /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
+		B3967B422C0BB29C0034161F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B3967B452C0BBA7A0034161F /* SignInGoogle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInGoogle.swift; sourceTree = "<group>"; };
+		B3967B492C0BBF330034161F /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
 		B3CD174A2C0A897B00414A0F /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		B3CD174C2C0A8FBF00414A0F /* AddFish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFish.swift; sourceTree = "<group>"; };
 		B3CD174E2C0A8FE100414A0F /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		B3D07B8E2C0A24E1007B3B89 /* fishtrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fishtrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D07B912C0A24E1007B3B89 /* fishtrackApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fishtrackApp.swift; sourceTree = "<group>"; };
 		B3D07B932C0A24E1007B3B89 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		B3D07B952C0A24E1007B3B89 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		B3D07B972C0A24E3007B3B89 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B3D07B9A2C0A24E3007B3B89 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B3D07BA02C0A24E3007B3B89 /* fishtrackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = fishtrackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -63,6 +81,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B367A4852C0B62D30073F75F /* PostgREST in Frameworks */,
+				B367A4832C0B62D30073F75F /* Functions in Frameworks */,
+				B367A48B2C0B62D30073F75F /* Supabase in Frameworks */,
+				B3967B3E2C0BA0390034161F /* GoogleSignInSwift in Frameworks */,
+				B367A4812C0B62D30073F75F /* Auth in Frameworks */,
+				B367A4892C0B62D30073F75F /* Storage in Frameworks */,
+				B367A4872C0B62D30073F75F /* Realtime in Frameworks */,
+				B3967B3C2C0BA0390034161F /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +109,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B367A47F2C0B62D30073F75F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B3967B432C0BBA5C0034161F /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				B3967B442C0BBA610034161F /* Auth */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		B3967B442C0BBA610034161F /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				B367A47D2C0B60AF0073F75F /* AuthManager.swift */,
+				B367A48C2C0B64160073F75F /* SignInApple.swift */,
+				B3967B452C0BBA7A0034161F /* SignInGoogle.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
 		B3D07B852C0A24E1007B3B89 = {
 			isa = PBXGroup;
 			children = (
@@ -90,6 +141,7 @@
 				B3D07BA32C0A24E3007B3B89 /* fishtrackTests */,
 				B3D07BAD2C0A24E3007B3B89 /* fishtrackUITests */,
 				B3D07B8F2C0A24E1007B3B89 /* Products */,
+				B367A47F2C0B62D30073F75F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -106,11 +158,13 @@
 		B3D07B902C0A24E1007B3B89 /* fishtrack */ = {
 			isa = PBXGroup;
 			children = (
+				B3967B432C0BBA5C0034161F /* Managers */,
+				B3967B422C0BB29C0034161F /* Info.plist */,
+				B367A48E2C0B75E40073F75F /* fishtrack.entitlements */,
 				B3D07BBE2C0A2677007B3B89 /* View */,
 				B3D07BBD2C0A2671007B3B89 /* Model */,
 				B3D07B912C0A24E1007B3B89 /* fishtrackApp.swift */,
 				B3D07B932C0A24E1007B3B89 /* ContentView.swift */,
-				B3D07B952C0A24E1007B3B89 /* Item.swift */,
 				B3D07B972C0A24E3007B3B89 /* Assets.xcassets */,
 				B3D07B992C0A24E3007B3B89 /* Preview Content */,
 				B3CD174A2C0A897B00414A0F /* CustomTabBar.swift */,
@@ -147,6 +201,7 @@
 			isa = PBXGroup;
 			children = (
 				B37A2DB92C0A42E400E300E0 /* Category.swift */,
+				B3967B402C0BB0E10034161F /* SignInViewModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -157,6 +212,7 @@
 				B3D07BC32C0A26C8007B3B89 /* Home.swift */,
 				B3CD174C2C0A8FBF00414A0F /* AddFish.swift */,
 				B3CD174E2C0A8FE100414A0F /* Settings.swift */,
+				B3967B492C0BBF330034161F /* SignUp.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -177,6 +233,16 @@
 			dependencies = (
 			);
 			name = fishtrack;
+			packageProductDependencies = (
+				B367A4802C0B62D30073F75F /* Auth */,
+				B367A4822C0B62D30073F75F /* Functions */,
+				B367A4842C0B62D30073F75F /* PostgREST */,
+				B367A4862C0B62D30073F75F /* Realtime */,
+				B367A4882C0B62D30073F75F /* Storage */,
+				B367A48A2C0B62D30073F75F /* Supabase */,
+				B3967B3B2C0BA0390034161F /* GoogleSignIn */,
+				B3967B3D2C0BA0390034161F /* GoogleSignInSwift */,
+			);
 			productName = fishtrack;
 			productReference = B3D07B8E2C0A24E1007B3B89 /* fishtrack.app */;
 			productType = "com.apple.product-type.application";
@@ -249,6 +315,10 @@
 				Base,
 			);
 			mainGroup = B3D07B852C0A24E1007B3B89;
+			packageReferences = (
+				B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				B3967B3A2C0BA0390034161F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			productRefGroup = B3D07B8F2C0A24E1007B3B89 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -291,12 +361,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B367A48D2C0B64160073F75F /* SignInApple.swift in Sources */,
+				B3967B4A2C0BBF330034161F /* SignUp.swift in Sources */,
 				B3D07B942C0A24E1007B3B89 /* ContentView.swift in Sources */,
+				B3967B462C0BBA7B0034161F /* SignInGoogle.swift in Sources */,
+				B367A47E2C0B60AF0073F75F /* AuthManager.swift in Sources */,
 				B37A2DBA2C0A42E400E300E0 /* Category.swift in Sources */,
 				B3CD174F2C0A8FE100414A0F /* Settings.swift in Sources */,
-				B3D07B962C0A24E1007B3B89 /* Item.swift in Sources */,
 				B3D07BC42C0A26C8007B3B89 /* Home.swift in Sources */,
 				B3CD174B2C0A897B00414A0F /* CustomTabBar.swift in Sources */,
+				B3967B412C0BB0E10034161F /* SignInViewModel.swift in Sources */,
 				B3CD174D2C0A8FBF00414A0F /* AddFish.swift in Sources */,
 				B3D07B922C0A24E1007B3B89 /* fishtrackApp.swift in Sources */,
 			);
@@ -459,12 +533,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = fishtrack/fishtrack.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fishtrack/Preview Content\"";
 				DEVELOPMENT_TEAM = PZ7QLS8852;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = fishtrack/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -478,6 +555,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = bencodes.fishtrack;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -489,12 +567,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = fishtrack/fishtrack.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"fishtrack/Preview Content\"";
 				DEVELOPMENT_TEAM = PZ7QLS8852;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = fishtrack/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -508,6 +589,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = bencodes.fishtrack;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -626,6 +708,68 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+		B3967B3A2C0BA0390034161F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B367A4802C0B62D30073F75F /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		B367A4822C0B62D30073F75F /* Functions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Functions;
+		};
+		B367A4842C0B62D30073F75F /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+		B367A4862C0B62D30073F75F /* Realtime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Realtime;
+		};
+		B367A4882C0B62D30073F75F /* Storage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Storage;
+		};
+		B367A48A2C0B62D30073F75F /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+		B3967B3B2C0BA0390034161F /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3967B3A2C0BA0390034161F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		B3967B3D2C0BA0390034161F /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3967B3A2C0BA0390034161F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3D07B862C0A24E1007B3B89 /* Project object */;
 }
