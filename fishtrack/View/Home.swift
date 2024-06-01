@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Home: View {
+    @State var selectedFilter: Category = categories.first!
     var body: some View {
         
         VStack {
@@ -16,8 +17,8 @@ struct Home: View {
                     Image(systemName: "circle.grid.2x2")
                         .font(.title2)
                         .padding(10)
-                        .background(.pink.opacity(0.12))
-                        .foregroundColor(.pink)
+                        .background(.blue.opacity(0.12))
+                        .foregroundColor(.blue)
                         .cornerRadius(8)
                 })
                 
@@ -49,10 +50,10 @@ struct Home: View {
                     HStack(spacing: 20) {
                         VStack(alignment: .leading, spacing: 8, content: {
                             (
-                                Text("The Fastest in Delivery ")
+                                Text("Track all your ")
                                 +
-                                Text("Food")
-                                    .foregroundColor(.pink)
+                                Text("Fish")
+                                    .foregroundColor(.blue)
                             )
                             .font(.title)
                             .fontWeight(.bold)
@@ -64,7 +65,7 @@ struct Home: View {
                                     .foregroundColor(.white)
                                     .padding(.vertical,10)
                                     .padding(.horizontal)
-                                    .background(.pink)
+                                    .background(.blue)
                                     .clipShape(Capsule())
                             })
                         })
@@ -77,42 +78,54 @@ struct Home: View {
                             .frame(width: getRect().width / 3)
                     }
                     .padding()
-                    .background(.yellow.opacity(0.2))
+                    .background(.thinMaterial)
                     .cornerRadius(15)
                     .padding(.horizontal)
                     
-                    Text("Categories")
+                    Spacer()
+                    
+                    Text("Filter")
                         .font(.title2)
                         .fontWeight(.bold)
-                        .padding()
+                        .padding(.horizontal)
                     
                     ScrollView(.horizontal, showsIndicators: false, content: {
                         HStack(spacing: 15) {
                             ForEach(categories){
-                                category in
+                                filter in
                                 HStack(spacing: 12) {
-                                    Image(category.image)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
+                                    Image(systemName: filter.image)
                                         .frame(width: 18, height: 18)
                                         .padding(6)
+                                        .foregroundColor(.blue)
                                         .background(.white)
                                         .clipShape(Circle())
                                     
-                                    Text(category.title)
+                                    Text(filter.title)
                                         .fontWeight(.bold)
-                                        .foregroundColor(.white)
+                                        .foregroundColor(selectedFilter.id == filter.id ? .white : .black)
                                 }
                                 .padding(.vertical, 12)
                                 .padding(.horizontal)
-                                .background(.pink)
+                                .background(selectedFilter.id == filter.id ? .blue : .gray.opacity(0.3))
                                 .clipShape(Capsule())
+                                .onTapGesture {
+                                    withAnimation(.spring()) {
+                                        selectedFilter = filter
+                                    }
+                                }
                             }
                         }
                         .padding(.horizontal)
                     })
+                    
+                    Spacer()
+                    
+                    Text("Your Fish")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .padding(.horizontal)
                 }
-                .padding(.vertical)
             })
         }
     }

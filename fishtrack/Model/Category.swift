@@ -13,9 +13,9 @@ struct Category: Identifiable {
     var title: String
 }
 
-var categories = [
-    Category(image: "test", title: "Test"),
-    Category(image: "test", title: "Test"),
-    Category(image: "test", title: "Test"),
-    Category(image: "test", title: "Test")
+var categories: Array<Category> = [
+    Category(image: "lines.measurement.horizontal", title: "Length"),
+    Category(image: "scalemass", title: "Weight"),
+    Category(image: "gear", title: "Test"),
+    Category(image: "gear", title: "Test")
 ]
