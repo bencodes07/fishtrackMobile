@@ -9,6 +9,7 @@ import SwiftUI
 
 struct Home: View {
     @State var selectedFilter: Category = categories.first!
+    @Environment(\.colorScheme) private var colorScheme
     var body: some View {
         
         VStack {
@@ -25,7 +26,7 @@ struct Home: View {
                     Image(systemName: "circle.grid.2x2")
                         .font(.title2)
                         .padding(10)
-                        .background(.blue.opacity(0.12))
+                        .background(colorScheme == .dark ? .blue.opacity(0.35) : .blue.opacity(0.12))
                         .foregroundColor(.blue)
                         .cornerRadius(8)
                 })
@@ -37,7 +38,7 @@ struct Home: View {
                     HStack(spacing: 20) {
                         VStack(alignment: .leading, spacing: 8, content: {
                             (
-                                Text("Track all your ")
+                                Text("Track all of your ")
                                 +
                                 Text("Fish")
                                     .foregroundColor(.blue)
@@ -90,7 +91,7 @@ struct Home: View {
                                     
                                     Text(filter.title)
                                         .fontWeight(.bold)
-                                        .foregroundColor(selectedFilter.id == filter.id ? .white : .black)
+                                        .foregroundColor(selectedFilter.id == filter.id ? .white : colorScheme == .dark ? Color(red: 0.85, green: 0.85, blue: 0.85) : .black)
                                 }
                                 .padding(.vertical, 8)
                                 .padding(.horizontal)
