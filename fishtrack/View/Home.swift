@@ -12,7 +12,15 @@ struct Home: View {
     var body: some View {
         
         VStack {
-            HStack {
+            HStack () {
+                Text("fishtrack.")
+                    .font(.title2)
+                    .fontWeight(.black)
+                    .foregroundColor(.blue)
+                    .padding(.leading, 4)
+                
+                Spacer()
+                
                 Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
                     Image(systemName: "circle.grid.2x2")
                         .font(.title2)
@@ -21,28 +29,7 @@ struct Home: View {
                         .foregroundColor(.blue)
                         .cornerRadius(8)
                 })
-                
-                Spacer()
-                
-                Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
-                    Image("profile")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 30, height: 30)
-                        .padding(10)
-                        .background(.black.opacity(0.08))
-                        .foregroundColor(.pink)
-                        .cornerRadius(8)
-                })
             }
-            .overlay(
-                HStack(spacing: 4) {
-                    Text("fishtrack.")
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .foregroundColor(.blue)
-                }
-            )
             .padding()
             
             ScrollView(.vertical, showsIndicators: false, content: {
@@ -59,7 +46,7 @@ struct Home: View {
                             .fontWeight(.bold)
                             
                             Button(action: {}, label: {
-                                Text("Order Now")
+                                Text("Add a Catch")
                                     .font(.footnote)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.white)
@@ -105,7 +92,7 @@ struct Home: View {
                                         .fontWeight(.bold)
                                         .foregroundColor(selectedFilter.id == filter.id ? .white : .black)
                                 }
-                                .padding(.vertical, 12)
+                                .padding(.vertical, 8)
                                 .padding(.horizontal)
                                 .background(selectedFilter.id == filter.id ? .blue : .gray.opacity(0.3))
                                 .clipShape(Capsule())
@@ -125,6 +112,45 @@ struct Home: View {
                         .font(.title2)
                         .fontWeight(.bold)
                         .padding(.horizontal)
+                    
+                    Text("All your fish in one single place.")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                        .padding(.horizontal)
+                        .padding(.bottom, 4)
+                    
+                    ScrollView {
+                        LazyVGrid(columns: [
+                            GridItem(.flexible(minimum: 100, maximum: 250)),
+                            GridItem(.flexible(minimum: 100, maximum: 250))], content: {
+                                ForEach(0..<10) { data in
+                                    VStack {
+                                        Image("")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .clipped()
+                                            .background(.gray)
+                                            .cornerRadius(20)
+                                            .padding(1)
+                                        Text("Mein Barsch")
+                                            .fontWeight(.semibold)
+                                            .font(.system(size: 18))
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(EdgeInsets(top: 2, leading: 4, bottom: 0, trailing: 0))
+                                        
+                                        HStack() {
+                                                Text("Hello").font(.caption).lineLimit(1)
+                                        }
+                                        .padding(.vertical, 4)
+                                        .padding(.horizontal, 10)
+                                        .foregroundColor(.blue)
+                                        .background(.blue.opacity(0.4))
+                                        .cornerRadius(20)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    }.padding(.bottom, 10)
+                                }
+                            }).padding(.horizontal)
+                    }
                 }
             })
         }
