@@ -23,6 +23,7 @@
 		B3967B4A2C0BBF330034161F /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3967B492C0BBF330034161F /* SignUp.swift */; };
 		B3967B4E2C0C5A950034161F /* SignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3967B4D2C0C5A950034161F /* SignIn.swift */; };
 		B3967B502C0C5AC80034161F /* Splash.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3967B4F2C0C5AC80034161F /* Splash.swift */; };
+		B3BB8C172C0C8D9100310F2F /* FormValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BB8C162C0C8D9100310F2F /* FormValidator.swift */; };
 		B3CD174B2C0A897B00414A0F /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CD174A2C0A897B00414A0F /* CustomTabBar.swift */; };
 		B3CD174D2C0A8FBF00414A0F /* AddFish.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CD174C2C0A8FBF00414A0F /* AddFish.swift */; };
 		B3CD174F2C0A8FE100414A0F /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CD174E2C0A8FE100414A0F /* Settings.swift */; };
@@ -64,6 +65,7 @@
 		B3967B492C0BBF330034161F /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
 		B3967B4D2C0C5A950034161F /* SignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignIn.swift; sourceTree = "<group>"; };
 		B3967B4F2C0C5AC80034161F /* Splash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Splash.swift; sourceTree = "<group>"; };
+		B3BB8C162C0C8D9100310F2F /* FormValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormValidator.swift; sourceTree = "<group>"; };
 		B3CD174A2C0A897B00414A0F /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		B3CD174C2C0A8FBF00414A0F /* AddFish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFish.swift; sourceTree = "<group>"; };
 		B3CD174E2C0A8FE100414A0F /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 			children = (
 				B37A2DB92C0A42E400E300E0 /* Category.swift */,
 				B3967B402C0BB0E10034161F /* SignInViewModel.swift */,
+				B3BB8C162C0C8D9100310F2F /* FormValidator.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -375,6 +378,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3BB8C172C0C8D9100310F2F /* FormValidator.swift in Sources */,
 				B3967B502C0C5AC80034161F /* Splash.swift in Sources */,
 				B367A48D2C0B64160073F75F /* SignInApple.swift in Sources */,
 				B3967B4E2C0C5A950034161F /* SignIn.swift in Sources */,

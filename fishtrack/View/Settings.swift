@@ -8,114 +8,78 @@
 import SwiftUI
 
 struct Settings: View {
-    @StateObject var viewModel = SignInViewModel()
     @Binding var appUser: AppUser?
     
-    @State private var email = ""
-    @State private var password = ""
-    @State private var isRegistrationPresented = false
-    
     var body: some View {
-        VStack {
-            VStack {
+        VStack (alignment: .leading) {
+            VStack (alignment: .leading) {
+                Text("Welcome back,")
+                    .font(.body)
+                    .fontWeight(.medium)
+                    .foregroundColor(.black.opacity(0.8))
+                Text(appUser?.email ?? "")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .frame(maxWidth: getRect().width, alignment: .leading)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .padding(.top, 24)
+            
+            ScrollView(.vertical, showsIndicators: false, content: {
+                Text("Settings")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
                 Button(action: {
-                    Task {
-                        do {
-                            let user = try await viewModel.signInWithApple()
-                            self.appUser = AppUser(uid: user.uid, email: user.email)
-                        } catch {
-                            print("Error signing in with apple")
-                        }
-                    }
+                    
                 }, label: {
-                    Text("Sign In With Apple")
+                    Label(title: {
+                        Text("Send Feedback")
+                    }, icon: {
+                        Image(systemName: "star")
+                            .padding(.horizontal)
+                            .padding(.trailing, -10)
+                            .fontWeight(.semibold)
+                    })
+                    .frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
+                    .font(.headline)
+                    .padding()
+                    .background(.black.opacity(0.05))
+                    .cornerRadius(10.0)
                 })
-                Button(action: {
-                    Task {
-                        do {
-                            let appUser = try await viewModel.signInWithGoogle()
-                            self.appUser = appUser
-                        } catch {
-                            print("Error signing in with google")
-                        }
-                    }
-                }, label: {Text("Sign In With Google")})
-            }
-            
-            Spacer()
-            
-            VStack {
-                TextField("Email", text: $email)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .padding(.top, 20)
                 
-                Divider()
-                
-                SecureField(
-                    "Password", text: $password)
-                .padding(.top, 20)
-                
-                Divider()
-            }
-            
-            Button(action: { 
-                Task {
-                    do {
-                        let user = try await viewModel.createNewUserWithEmail(email: email, password: password)
-                        self.appUser = AppUser(uid: user.uid, email: user.email)
-                    } catch {
-                        print("issue with sign up")
-                    }
-                }
-            }, label: {
-                Text("New User? Signup Here")
-            })
-            
-//            .sheet(isPresented: $isRegistrationPresented, content: {
-//                SignUp()
-//            })
-            
-            Spacer()
-            if(appUser != nil) {
-                Button(action: {
+                Button(role: .destructive, action: {
                     Task {
                         do {
                             try await AuthManager.shared.signOut()
-                            self.appUser = nil
+                            appUser = nil
                         } catch {
-                            print("unable to sign out")
+                            print("Unable to Sign Out")
                         }
                     }
                 }, label: {
-                    Text("Sign Out").foregroundColor(.red)
+                    Label(title: {
+                        Text("Sign Out")
+                    }, icon: {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .padding(.horizontal)
+                            .padding(.trailing, -10)
+                            .fontWeight(.semibold)
+                    })
+                    .frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
+                    .font(.headline)
+                    .padding()
+                    .background(.black.opacity(0.05))
+                    .cornerRadius(10.0)
                 })
-            }
-            
-            Button(
-                action: {
-                    Task {
-                        do {
-                            let user = try await viewModel.signInWithEmail(email: email, password: password)
-                            self.appUser = AppUser(uid: user!.uid, email: user!.email)
-                        } catch {
-                            print("issue with sign in")
-                        }
-                    }
-                },
-                label: {
-                    Text("Sign In")
-                        .font(.system(size: 24, weight: .bold, design: .default))
-                        .frame(maxWidth: .infinity, maxHeight: 60)
-                        .foregroundColor(Color.white)
-                        .background(Color.blue)
-                        .cornerRadius(10)
-                }
-            )
-        }.padding(30)
+            })
+            .padding()
+        }
     }
 }
 
 #Preview {
-    Settings(appUser: .constant(AppUser(uid: "1234", email: nil)))
+    Settings(appUser: .constant(AppUser(uid: "1234", email: "boeckmannben@gmail.com")))
 }

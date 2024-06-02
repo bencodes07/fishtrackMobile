@@ -9,6 +9,10 @@ import SwiftUI
 
 struct Splash: View {
     @Environment(\.colorScheme) private var colorScheme
+    @State private var showSignUp = false
+    @State private var showSignIn = false
+    @Binding var appUser: AppUser?
+    
     var body: some View {
         VStack {
             Spacer()
@@ -25,7 +29,7 @@ struct Splash: View {
                     .foregroundColor(colorScheme == .light ? .black : .white)
                 +
                 Text("track.")
-                    .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                    .font(.title)
                     .fontWeight(.black)
                     .foregroundColor(.blue)
             )
@@ -33,9 +37,8 @@ struct Splash: View {
             
             Spacer()
             
-            Button(action: {
-                // Action for the button
-            }) {
+
+            Button(action: {showSignUp = true}) {
                 Text("Get Started")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -44,11 +47,13 @@ struct Splash: View {
                     .background(Color.blue)
                     .cornerRadius(10)
                     .padding(.horizontal)
-            }.padding(.vertical)
-            
-            Button(action: {
-                
-            }, label: {
+            }
+            .padding(.vertical)
+            .fullScreenCover(isPresented: $showSignUp) {
+                SignUp(appUser: $appUser, isPresented: $showSignUp)
+            }
+
+            Button(action: {showSignIn = true}, label: {
                 (
                     Text("Already a member? ")
                         .font(.footnote)
@@ -61,12 +66,13 @@ struct Splash: View {
                         .fontWeight(.medium)
                         .underline()
                 )
-               
-            })
+            }).fullScreenCover(isPresented: $showSignIn) {
+                SignIn(appUser: $appUser, isPresented: $showSignIn)
+            }
         }
     }
 }
 
 #Preview {
-    Splash()
+    Splash(appUser: .constant(AppUser(uid: "1234", email: nil)))
 }

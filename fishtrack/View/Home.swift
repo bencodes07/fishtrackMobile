@@ -9,7 +9,9 @@ import SwiftUI
 
 struct Home: View {
     @State var selectedFilter: Category = categories.first!
+    @Binding var appUser: AppUser?
     @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         
         VStack {
@@ -21,18 +23,6 @@ struct Home: View {
                     .padding(.leading, 4)
                 
                 Spacer()
-                
-                Button(action: {
-                    Task {
-                        do {
-                            try await AuthManager.shared.signOut()
-                        } catch {
-                            print("error while signing out")
-                        }
-                    }
-                }, label: {
-                    Text("Sign out").foregroundColor(.red)
-                })
                 
                 Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
                     Image(systemName: "circle.grid.2x2")
@@ -93,22 +83,32 @@ struct Home: View {
                         HStack(spacing: 15) {
                             ForEach(categories){
                                 filter in
-                                HStack(spacing: 12) {
-                                    Image(systemName: filter.image)
-                                        .frame(width: 18, height: 18)
-                                        .padding(6)
-                                        .foregroundColor(.blue)
-                                        .background(.white)
-                                        .clipShape(Circle())
+                                ZStack {
+                                    HStack(spacing: 12) {
+                                        Image(systemName: filter.image)
+                                            .frame(width: 18, height: 18)
+                                            .foregroundColor(filter.id == selectedFilter.id ? .white : .blue)
+                                            .padding(2)
+                                            .background(filter.id == selectedFilter.id ? Color.blue : Color.clear)
+                                            .clipShape(Circle())
+                                            .matchedGeometryEffect(id: filter.id, in: animationNamespace)
+                                        
+                                        Text(filter.title)
+                                            .fontWeight(.bold)
+                                            .font(.body)
+                                            .foregroundColor(filter.id == selectedFilter.id ? .white : .blue)
+                                    }
+                                    .padding(8)
+                                    .padding(.trailing, 10)
+                                    .background(filter.id == selectedFilter.id ? Color.blue : Color.white)
+                                    .clipShape(Capsule())
+                                    .shadow(color: filter.id == selectedFilter.id ? Color.blue.opacity(0.3) : Color.clear, radius: 5, x: 0, y: 5)
                                     
-                                    Text(filter.title)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(selectedFilter.id == filter.id ? .white : colorScheme == .dark ? Color(red: 0.85, green: 0.85, blue: 0.85) : .black)
+                                    Capsule()
+                                        .stroke(Color.blue, lineWidth: 2)
+                                        .padding(2)
+                                        .opacity(filter.id == selectedFilter.id ? 0 : 1)
                                 }
-                                .padding(.vertical, 8)
-                                .padding(.horizontal)
-                                .background(selectedFilter.id == filter.id ? .blue : .gray.opacity(0.3))
-                                .clipShape(Capsule())
                                 .onTapGesture {
                                     withAnimation(.spring()) {
                                         selectedFilter = filter
@@ -168,10 +168,11 @@ struct Home: View {
             })
         }
     }
+    @Namespace private var animationNamespace
 }
 
 #Preview {
-    Home()
+    Home(appUser: .constant(AppUser(uid: "1234", email: nil)))
 }
 
 extension View {

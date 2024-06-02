@@ -8,6 +8,16 @@
 import SwiftUI
 import SwiftData
 
+class AppUserModel: ObservableObject {
+    @Published var uid: String
+    @Published var email: String?
+
+    init(uid: String, email: String?) {
+        self.uid = uid
+        self.email = email
+    }
+}
+
 class AppUserWrapper: ObservableObject {
     @Published var user: AppUser?
 }
@@ -21,7 +31,7 @@ struct ContentView: View {
             if let _ = appUser.user {
                 VStack {
                     TabView(selection: $tabSelected) {
-                        Home()
+                        Home(appUser: $appUser.user)
                             .tag(Tab.house)
                         AddFish()
                             .tag(Tab.plus)
@@ -34,13 +44,13 @@ struct ContentView: View {
                     CustomTabBar(selectedTab: $tabSelected)
                 }
             } else {
-                Settings(appUser: $appUser.user)
+                Splash(appUser: $appUser.user)
             }
         }.onAppear {
             Task {
                 do {
                     let user = try await AuthManager.shared.getCurrentSession()
-                    self.appUser.user = AppUser(uid: user.uid, email: user.email)
+                    appUser.user = AppUser(uid: user.uid, email: user.email)
                 } catch {
                     print("No current session found.")
                 }
