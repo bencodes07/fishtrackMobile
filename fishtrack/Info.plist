@@ -15,5 +15,7 @@
 	</array>
 	<key>GIDClientID</key>
 	<string>535672827016-g6qffq026m7112hh040df8vd8u7ersgm.apps.googleusercontent.com</string>
+	<key>MKDirectionsApplicationSupportedModes</key>
+	<array/>
 </dict>
 </plist>

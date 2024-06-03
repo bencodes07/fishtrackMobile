@@ -33,7 +33,7 @@ struct ContentView: View {
                     TabView(selection: $tabSelected) {
                         Home(appUser: $appUser.user)
                             .tag(Tab.house)
-                        AddFish()
+                        AddFish(appUser: $appUser.user)
                             .tag(Tab.plus)
                         Settings(appUser: $appUser.user)
                             .tag(Tab.gearshape)
