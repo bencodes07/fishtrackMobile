@@ -67,10 +67,12 @@ struct AddFish: View {
             }
             .onAppear {
                 Task {
-                    do {
-                        fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
-                    } catch {
-                        print("Error fetching items")
+                    if(appUser != nil ) {
+                        do {
+                            fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                        } catch {
+                            print("Error fetching items")
+                        }
                     }
                 }
             }

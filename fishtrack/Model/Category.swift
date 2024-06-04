@@ -9,13 +9,12 @@ import SwiftUI
 
 struct Category: Identifiable {
     var id: String = UUID().uuidString
-    var image: String
-    var title: String
+    let title: String
+    let image: String
 }
 
-var categories: Array<Category> = [
-    Category(image: "lines.measurement.horizontal", title: "Length"),
-    Category(image: "scalemass", title: "Weight"),
-    Category(image: "gear", title: "Test"),
-    Category(image: "gear", title: "Test")
+let categories = [
+    Category(title: "All", image: "square.grid.2x2"),
+    Category(title: "Weight", image: "scalemass"),
+    Category(title: "Length", image: "ruler")
 ]

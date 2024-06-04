@@ -9,7 +9,9 @@ import SwiftUI
 
 struct Home: View {
     @State var selectedFilter: Category = categories.first!
+    @State private var fishItems: [Fish]?
     @Binding var appUser: AppUser?
+    @StateObject var viewModel = FishModel()
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
@@ -112,6 +114,7 @@ struct Home: View {
                                 .onTapGesture {
                                     withAnimation(.spring()) {
                                         selectedFilter = filter
+                                        applyFilter()
                                     }
                                 }
                             }
@@ -136,39 +139,82 @@ struct Home: View {
                         LazyVGrid(columns: [
                             GridItem(.flexible(minimum: 100, maximum: 250)),
                             GridItem(.flexible(minimum: 100, maximum: 250))], content: {
-                                ForEach(0..<10) { data in
-                                    VStack {
-                                        Image("")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .clipped()
-                                            .background(.gray)
+                                if fishItems != nil && appUser != nil {
+                                    ForEach(fishItems!, id: \.image) { fish in
+                                        VStack {
+                                            AsyncImage(url: URL(string: fish.image)) { phase in
+                                                switch phase {
+                                                case .empty:
+                                                    ProgressView()
+                                                        .frame(maxWidth: getRect().width / 2.2, maxHeight: getRect().width / 2.2 * 0.8)
+                                                case .success(let image):
+                                                    image.resizable()
+                                                        .scaledToFill()
+                                                        .frame(maxWidth: getRect().width / 2.2, maxHeight: getRect().width / 2.2 * 0.8)
+                                                        .clipped()
+                                                        .cornerRadius(20)
+                                                case .failure:
+                                                    Image(systemName: "photo")
+                                                        .resizable()
+                                                        .scaledToFill()
+                                                        .frame(maxWidth: getRect().width / 2.2, maxHeight: getRect().width / 2.2 * 0.8)
+                                                        .clipped()
+                                                        .cornerRadius(20)
+                                                @unknown default:
+                                                    EmptyView().frame(maxWidth: getRect().width / 2.2, maxHeight: getRect().width / 2.2 * 0.8)
+                                                }
+                                            }
+                                            Text("\(fish.name)")
+                                                .fontWeight(.semibold)
+                                                .font(.system(size: 18))
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .padding(EdgeInsets(top: 2, leading: 4, bottom: 0, trailing: 0))
+                                            
+                                            HStack() {
+                                                Text("\(fish.catch_type)").font(.caption).lineLimit(1)
+                                            }
+                                            .padding(.vertical, 4)
+                                            .padding(.horizontal, 10)
+                                            .foregroundColor(.blue)
+                                            .background(.blue.opacity(0.4))
                                             .cornerRadius(20)
-                                            .padding(1)
-                                        Text("Mein Barsch")
-                                            .fontWeight(.semibold)
-                                            .font(.system(size: 18))
                                             .frame(maxWidth: .infinity, alignment: .leading)
-                                            .padding(EdgeInsets(top: 2, leading: 4, bottom: 0, trailing: 0))
-                                        
-                                        HStack() {
-                                                Text("Hello").font(.caption).lineLimit(1)
-                                        }
-                                        .padding(.vertical, 4)
-                                        .padding(.horizontal, 10)
-                                        .foregroundColor(.blue)
-                                        .background(.blue.opacity(0.4))
-                                        .cornerRadius(20)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    }.padding(.bottom, 10)
+                                        }.padding(.bottom, 10)
+                                    }
                                 }
                             }).padding(.horizontal)
                     }
                 }
-            })
+            }).onAppear {
+                Task {
+                    if(appUser != nil ) {
+                        do {
+                            fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                            applyFilter()
+                        } catch {
+                            print("Error fetching items")
+                        }
+                    }
+                }
+            }
         }
     }
     @Namespace private var animationNamespace
+    
+    private func applyFilter() {
+        guard let fishItems = fishItems else { return }
+        
+        switch selectedFilter.title {
+        case "All":
+            self.fishItems = fishItems.sorted { $0.created_at > $1.created_at }
+        case "Weight":
+            self.fishItems = fishItems.sorted { $0.catch_weight > $1.catch_weight }
+        case "Length":
+            self.fishItems = fishItems.sorted { $0.catch_length > $1.catch_length }
+        default:
+            break
+        }
+    }
 }
 
 #Preview {
@@ -178,5 +224,13 @@ struct Home: View {
 extension View {
     func getRect()->CGRect {
         return UIScreen.main.bounds
+    }
+}
+
+extension String {
+    func toDate() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
+        return dateFormatter.date(from: self)
     }
 }

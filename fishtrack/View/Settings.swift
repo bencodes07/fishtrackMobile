@@ -32,17 +32,7 @@ struct Settings: View {
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Button(action: {
-                    // Test creating fish
-                    Task {
-                        do {
-                            //try await FishModel().createItem(name: "Test Fisch", uid: appUser!.uid)
-                            try await FishModel().fetchItems(userUid: appUser!.uid)
-                        } catch {
-                            print(error)
-                        }
-                    }
-                }, label: {
+                Button(action: {}, label: {
                     Label(title: {
                         Text("Send Feedback")
                     }, icon: {

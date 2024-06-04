@@ -16,7 +16,7 @@ class DatabaseManager {
     let client = SupabaseClient(supabaseURL: URL(string: "https://vvgxpnjuncthfgvpsurz.supabase.co")!, supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2Z3hwbmp1bmN0aGZndnBzdXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTcxNjkwNTYsImV4cCI6MjAzMjc0NTA1Nn0.biEGqgzoiAhnOwJzpMKkiJ-96-U-zAAnFKHm1KP7W40")
     
     func createFishItem(item: FishPayload) async throws {
-        let response = try await client.from("fish").insert(item).execute()
+        try await client.from("fish").insert(item).execute()
     }
     
     func updateFishImage(imageUrl: URL, uuid: String) async throws {
