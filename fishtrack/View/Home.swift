@@ -15,7 +15,6 @@ struct Home: View {
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
-        
         VStack {
             HStack () {
                 Text("fishtrack.")
@@ -91,7 +90,7 @@ struct Home: View {
                                             .frame(width: 18, height: 18)
                                             .foregroundColor(filter.id == selectedFilter.id ? .white : .blue)
                                             .padding(2)
-                                            .background(filter.id == selectedFilter.id ? Color.blue : Color.clear)
+                                            .background(filter.id == selectedFilter.id ? Color.blue : colorScheme == .light ? Color.white : Color.black)
                                             .clipShape(Circle())
                                             .matchedGeometryEffect(id: filter.id, in: animationNamespace)
                                         
@@ -102,9 +101,8 @@ struct Home: View {
                                     }
                                     .padding(8)
                                     .padding(.trailing, 10)
-                                    .background(filter.id == selectedFilter.id ? Color.blue : Color.white)
+                                    .background(filter.id == selectedFilter.id ? Color.blue : colorScheme == .light ? Color.white : Color.black)
                                     .clipShape(Capsule())
-                                    .shadow(color: filter.id == selectedFilter.id ? Color.blue.opacity(0.3) : Color.clear, radius: 5, x: 0, y: 5)
                                     
                                     Capsule()
                                         .stroke(Color.blue, lineWidth: 2)

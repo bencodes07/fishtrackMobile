@@ -9,6 +9,7 @@ import SwiftUI
 
 struct Settings: View {
     @Binding var appUser: AppUser?
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack (alignment: .leading) {
@@ -16,7 +17,7 @@ struct Settings: View {
                 Text("Welcome back,")
                     .font(.body)
                     .fontWeight(.medium)
-                    .foregroundColor(.black.opacity(0.8))
+                    .foregroundColor(colorScheme == .light ? Color.black.opacity(0.8) : Color.white.opacity(0.8))
                 Text(appUser?.email ?? "")
                     .font(.title2)
                     .fontWeight(.semibold)
@@ -44,7 +45,7 @@ struct Settings: View {
                     .frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
                     .font(.headline)
                     .padding()
-                    .background(.black.opacity(0.05))
+                    .background(colorScheme == .light ? Color.black.opacity(0.05) : Color.white.opacity(0.1))
                     .cornerRadius(10.0)
                 })
                 
@@ -69,7 +70,7 @@ struct Settings: View {
                     .frame(maxWidth: .infinity, minHeight: 30, alignment: .leading)
                     .font(.headline)
                     .padding()
-                    .background(.black.opacity(0.05))
+                    .background(colorScheme == .light ? Color.black.opacity(0.05) : Color.white.opacity(0.1))
                     .cornerRadius(10.0)
                 })
             })
