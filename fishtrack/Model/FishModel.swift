@@ -28,8 +28,8 @@ struct FishPayload: Codable {
     let description: String
     
     let catch_type: String
-    let catch_length: Float
-    let catch_weight: Float
+    let catch_length: String
+    let catch_weight: String
     let catch_date: String
     let catch_location: String
     let image: String?
@@ -47,8 +47,8 @@ class FishModel: ObservableObject {
         name: String,
         description: String,
         catch_type: String,
-        catch_length: Float,
-        catch_weight: Float,
+        catch_length: String,
+        catch_weight: String,
         catch_date: String,
         catch_location: String,
         uid: String,

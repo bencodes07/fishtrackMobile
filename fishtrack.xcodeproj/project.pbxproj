@@ -16,6 +16,8 @@
 		B367A48B2C0B62D30073F75F /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = B367A48A2C0B62D30073F75F /* Supabase */; };
 		B367A48D2C0B64160073F75F /* SignInApple.swift in Sources */ = {isa = PBXBuildFile; fileRef = B367A48C2C0B64160073F75F /* SignInApple.swift */; };
 		B37A2DBA2C0A42E400E300E0 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37A2DB92C0A42E400E300E0 /* Category.swift */; };
+		B37D40022C10D41700707F6C /* LocationPicker in Frameworks */ = {isa = PBXBuildFile; productRef = B37D40012C10D41700707F6C /* LocationPicker */; };
+		B37D40042C10D5F400707F6C /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D40032C10D5F400707F6C /* LocationManager.swift */; };
 		B3967B3C2C0BA0390034161F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B3967B3B2C0BA0390034161F /* GoogleSignIn */; };
 		B3967B3E2C0BA0390034161F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B3967B3D2C0BA0390034161F /* GoogleSignInSwift */; };
 		B3967B412C0BB0E10034161F /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3967B402C0BB0E10034161F /* SignInViewModel.swift */; };
@@ -62,6 +64,7 @@
 		B367A48C2C0B64160073F75F /* SignInApple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInApple.swift; sourceTree = "<group>"; };
 		B367A48E2C0B75E40073F75F /* fishtrack.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = fishtrack.entitlements; sourceTree = "<group>"; };
 		B37A2DB92C0A42E400E300E0 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		B37D40032C10D5F400707F6C /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		B3967B402C0BB0E10034161F /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
 		B3967B422C0BB29C0034161F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B3967B452C0BBA7A0034161F /* SignInGoogle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInGoogle.swift; sourceTree = "<group>"; };
@@ -93,6 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B37D40022C10D41700707F6C /* LocationPicker in Frameworks */,
 				B367A4852C0B62D30073F75F /* PostgREST in Frameworks */,
 				B367A4832C0B62D30073F75F /* Functions in Frameworks */,
 				B367A48B2C0B62D30073F75F /* Supabase in Frameworks */,
@@ -134,6 +138,7 @@
 				B3967B442C0BBA610034161F /* Auth */,
 				B3BB8C1A2C0DDB4D00310F2F /* DatabaseManager.swift */,
 				B3BB8C1C2C0E3B5800310F2F /* StorageManager.swift */,
+				B37D40032C10D5F400707F6C /* LocationManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -268,6 +273,7 @@
 				B367A48A2C0B62D30073F75F /* Supabase */,
 				B3967B3B2C0BA0390034161F /* GoogleSignIn */,
 				B3967B3D2C0BA0390034161F /* GoogleSignInSwift */,
+				B37D40012C10D41700707F6C /* LocationPicker */,
 			);
 			productName = fishtrack;
 			productReference = B3D07B8E2C0A24E1007B3B89 /* fishtrack.app */;
@@ -344,6 +350,7 @@
 			packageReferences = (
 				B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				B3967B3A2C0BA0390034161F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				B37D40002C10D3D100707F6C /* XCRemoteSwiftPackageReference "LocationPickerForSwiftUI" */,
 			);
 			productRefGroup = B3D07B8F2C0A24E1007B3B89 /* Products */;
 			projectDirPath = "";
@@ -404,6 +411,7 @@
 				B3CD174B2C0A897B00414A0F /* CustomTabBar.swift in Sources */,
 				B3967B412C0BB0E10034161F /* SignInViewModel.swift in Sources */,
 				B3CD174D2C0A8FBF00414A0F /* AddFish.swift in Sources */,
+				B37D40042C10D5F400707F6C /* LocationManager.swift in Sources */,
 				B3D07B922C0A24E1007B3B89 /* fishtrackApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -574,6 +582,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fishtrack/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to provide better service.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -608,6 +617,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fishtrack/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to provide better service.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -754,6 +764,14 @@
 				minimumVersion = 2.5.1;
 			};
 		};
+		B37D40002C10D3D100707F6C /* XCRemoteSwiftPackageReference "LocationPickerForSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/alessiorubicini/LocationPickerForSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.2;
+			};
+		};
 		B3967B3A2C0BA0390034161F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -794,6 +812,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
+		};
+		B37D40012C10D41700707F6C /* LocationPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37D40002C10D3D100707F6C /* XCRemoteSwiftPackageReference "LocationPickerForSwiftUI" */;
+			productName = LocationPicker;
 		};
 		B3967B3B2C0BA0390034161F /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -8,6 +8,8 @@
 import SwiftUI
 import PhotosUI
 import UIKit
+import Combine
+import LocationPicker
 
 struct AddFish: View {
     @State private var image: Image?
@@ -19,6 +21,19 @@ struct AddFish: View {
     
     @State private var name: String = ""
     @State private var type: String = ""
+    @State private var length: String = ""
+    @State private var weight: String = ""
+    @State private var description: String = ""
+    @State private var date = Date()
+    @State private var location: String = ""
+    
+    @StateObject var locationManager = LocationManager()
+    
+    @State private var coordinates = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    @State private var showSheet = false
+    
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
         VStack {
@@ -52,100 +67,112 @@ struct AddFish: View {
                     .font(.footnote)
                     .foregroundColor(.gray)
                     .padding(.horizontal)
-                    .padding(.bottom, 4)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 VStack(alignment: .leading, spacing: 12) {
-                    TextField("Name", text: $name)
+                    TextField("Name *", text: $name)
                         .padding()
                         .background(.gray.opacity(0.15))
                         .cornerRadius(10.0)
-                        .textInputAutocapitalization(.never)
-                        .disableAutocorrection(true)
-                    TextField("Fish Type", text: $type)
+                    TextField("Fish Type *", text: $type)
                         .padding()
                         .background(.gray.opacity(0.15))
                         .cornerRadius(10.0)
-                        .textInputAutocapitalization(.never)
-                        .disableAutocorrection(true)
                     
-                    PhotosPicker("Select an Image", selection: $item, matching: .images)
+                    NumberInputWithSuffix(text: $length, placeholder: "Fish Length *", suffix: "cm")
+                    
+                    NumberInputWithSuffix(text: $weight, placeholder: "Fish Weight *", suffix: "lb")
+                    
+                    DatePicker("Select Catch Date", selection: $date, displayedComponents: [.date])
+                        .padding()
+                        .padding(.vertical, -5)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundColor(.gray.opacity(0.6))
+                        .background(.gray.opacity(0.15))
+                        .cornerRadius(10.0)
+                        .datePickerStyle(.compact)
+                    
+                    Button("Select location") {
+                        coordinates.latitude = locationManager.latitude
+                        coordinates.longitude = locationManager.longitude
+                        self.showSheet.toggle()
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.gray.opacity(0.15))
+                    .foregroundColor(.gray.opacity(0.6))
+                    .cornerRadius(10)
+
+                    TextField("Description", text: $description)
+                        .padding()
+                        .background(.gray.opacity(0.15))
+                        .cornerRadius(10.0)
+                    
+                    PhotosPicker("Select an Image *", selection: $item, matching: .images)
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(.gray.opacity(0.15))
                         .cornerRadius(10)
-                    
-                    Button(action: {}, label: {
-                        Text("Upload")
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                            .padding(.top, 20)
-                    })
                 }.padding()
             })
+            Button(action: {
+                if validateFields() {
+                    Task {
+                        if let item = item {
+                            do {
+                                let photoData = try await item.loadTransferable(type: Data.self)
+                                if let photoData = photoData {
+                                    print("Photo data loaded successfully.")
+                                    try await FishModel().createItem(name: name, description: description, catch_type: type, catch_length: length, catch_weight: weight, catch_date: date.ISO8601Format(), catch_location: coordinates.latitude.formatted() + " " + coordinates.longitude.formatted(), uid: appUser!.uid, image: photoData)
+                                } else {
+                                    print("Failed to load photo data.")
+                                }
+                            } catch {
+                                print("Error loading photo data: \(error)")
+                            }
+                        }
+                    }
+                } else {
+                    showAlert = true
+                }
+            }, label: {
+                Text("Upload")
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .bottom)
+                    .background(.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .padding()
+                    .padding(.horizontal, 15)
+                    .padding(.bottom, 35)
+            }).alert(isPresented: $showAlert) {
+                Alert(title: Text("Validation Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            }
+        }.sheet(isPresented: $showSheet) {
+            LocationPicker(instructions: "Tap to select coordinates", coordinates: $coordinates, dismissOnSelection: true)
         }
-//        VStack {
-//            Text("Add a new fish")
-//            
-//            PhotosPicker("select image", selection: $item, matching: .images)
-//            
-//            Button(action: {
-//                Task {
-//                    if let item = item {
-//                        do {
-//                            let photoData = try await item.loadTransferable(type: Data.self)
-//                            if let photoData = photoData {
-//                                print("Photo data loaded successfully.")
-//                                try await FishModel().createItem(name: "Test Name", description: "Description", catch_type: "Type", catch_length: 123, catch_weight: 123, catch_date: "XX.XX.XXXX", catch_location: "Location", uid: appUser!.uid, image: photoData)
-//                            } else {
-//                                print("Failed to load photo data.")
-//                            }
-//                        } catch {
-//                            print("Error loading photo data: \(error)")
-//                        }
-//                    }
-//                }
-//            }, label: {Text("Upload")})
-//            ScrollView {
-//                LazyVStack {
-//                    if fishItems != nil {
-//                        ForEach(fishItems!, id: \.image) { fishItem in
-//                            AsyncImage(url: URL(string: fishItem.image)) { phase in
-//                                switch phase {
-//                                case .empty:
-//                                    Text("Empty Image")
-//                                case .success(let image):
-//                                    image.resizable()
-//                                         .aspectRatio(contentMode: .fit)
-//                                case .failure:
-//                                    Image(systemName: "photo").onAppear() {
-//                                        print(fishItem.image)
-//                                    }
-//                                @unknown default:
-//                                    Text("Empty View")
-//                                }
-//                            }
-//                            .frame(height: 200)
-//                            .cornerRadius(8)
-//                            .padding()
-//                        }
-//                    }
-//                }
-//            }
-//            .onAppear {
-//                Task {
-//                    if(appUser != nil ) {
-//                        do {
-//                            fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
-//                        } catch {
-//                            print("Error fetching items")
-//                        }
-//                    }
-//                }
-//            }
-//        }
+    }
+    private func validateFields() -> Bool {
+        if name.isEmpty {
+            alertMessage = "Please enter the name of the fish."
+            return false
+        }
+        if type.isEmpty {
+            alertMessage = "Please enter the type of the fish."
+            return false
+        }
+        if length.isEmpty {
+            alertMessage = "Please enter the length of the fish."
+            return false
+        }
+        if weight.isEmpty {
+            alertMessage = "Please enter the weight of the fish."
+            return false
+        }
+        if item == nil {
+            alertMessage = "Please select an image."
+            return false
+        }
+        return true
     }
 }
 
@@ -162,5 +189,31 @@ extension UIImageView {
                 }
             }
         }
+    }
+}
+
+struct NumberInputWithSuffix: View {
+    @Binding var text: String
+    let placeholder: String
+    let suffix: String
+    
+    var body: some View {
+        HStack {
+            TextField(placeholder, text: $text)
+                .keyboardType(.numberPad)
+                .onReceive(Just(text)) { newValue in
+                    let filtered = newValue.filter { "0123456789".contains($0) }
+                    if filtered != newValue {
+                        self.text = filtered
+                    }
+                }
+                .padding()
+            
+            Text(suffix)
+                .foregroundColor(.gray)
+                .padding(.leading, -35)
+        }
+        .background(Color.gray.opacity(0.15))
+        .cornerRadius(10.0)
     }
 }
