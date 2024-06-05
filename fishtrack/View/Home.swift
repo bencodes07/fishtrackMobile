@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIImageViewer
 
 struct Home: View {
     @State var selectedFilter: Category = categories.first!
@@ -13,6 +14,10 @@ struct Home: View {
     @Binding var appUser: AppUser?
     @StateObject var viewModel = FishModel()
     @Environment(\.colorScheme) private var colorScheme
+    
+    @State private var showDetails: Bool = false
+    @State private var selectedFish: Fish?
+    @State private var isImagePresented = false
     
     var body: some View {
         VStack {
@@ -74,6 +79,13 @@ struct Home: View {
                     .padding(.horizontal)
                     
                     Spacer()
+                    
+                    Button(action: {
+                        selectedFish = fishItems?.first
+                        showDetails = true
+                    }, label: {
+                        Text("Test Sheet")
+                    })
                     
                     Text("Filter")
                         .font(.title2)
@@ -178,6 +190,10 @@ struct Home: View {
                                             .cornerRadius(20)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         }.padding(.bottom, 10)
+                                            .onTapGesture {
+                                                selectedFish = fish
+                                                showDetails = true
+                                            }
                                     }
                                 }
                             }).padding(.horizontal)
@@ -195,6 +211,52 @@ struct Home: View {
                     }
                 }
             }
+            .sheet(isPresented: $showDetails, content: {
+                if selectedFish != nil {
+                    VStack(spacing: 12) {
+                        ZStack(alignment: .topLeading) {
+                            AsyncImage(url: URL(string: selectedFish!.image)) { phase in
+                                switch phase {
+                                case .empty:
+                                    ProgressView()
+                                        .frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
+                                case .success(let image):
+                                    image.resizable()
+                                        .scaledToFit()
+                                        .frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
+                                        .clipped()
+                                        .cornerRadius(20)
+                                        .onTapGesture {
+                                            isImagePresented = true
+                                        }
+                                case .failure:
+                                    Image(systemName: "photo")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
+                                        .clipped()
+                                        .cornerRadius(20)
+                                @unknown default:
+                                    EmptyView().frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
+                                }
+                            }
+                            Button(action: { showDetails = false }, label: {
+                                Image(systemName: "chevron.backward")
+                                    .padding()
+                                    .background(Color.white.opacity(0.7))
+                                    .clipShape(Circle())
+                            })
+                            .padding()
+                        }
+                        .fullScreenCover(isPresented: $isImagePresented) {
+                            if let selectedFish = selectedFish {
+                                FullScreenImageView(isPresented: $isImagePresented, imageUrl: URL(string: selectedFish.image)!)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: getRect().width / 1.5, alignment: .leading)
+                }
+            })
         }
     }
     @Namespace private var animationNamespace
@@ -230,5 +292,77 @@ extension String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
         return dateFormatter.date(from: self)
+    }
+}
+
+struct FullScreenImageView: View {
+    @Binding var isPresented: Bool
+    var imageUrl: URL
+    
+    var body: some View {
+        ZStack {
+            Color.black.edgesIgnoringSafeArea(.all)
+            
+            AsyncImage(url: imageUrl) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView()
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .pinchToZoom()
+                case .failure:
+                    Image(systemName: "photo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                @unknown default:
+                    EmptyView()
+                }
+            }
+            
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        isPresented = false
+                    }) {
+                        Image(systemName: "xmark")
+                            .resizable()
+                            .clipShape(Circle())
+                            .frame(width: 30, height: 30)
+                            .tint(.blue)
+                            .padding()
+                    }
+                }
+                Spacer()
+            }
+        }
+    }
+}
+
+extension View {
+    func pinchToZoom() -> some View {
+        return self.modifier(PinchToZoom())
+    }
+}
+
+struct PinchToZoom: ViewModifier {
+    @State private var scale: CGFloat = 1.0
+    @State private var lastScale: CGFloat = 1.0
+    
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(scale)
+            .gesture(MagnificationGesture()
+                .onChanged { value in
+                    let delta = value / self.lastScale
+                    self.lastScale = value
+                    self.scale *= delta
+                }
+                .onEnded { value in
+                    self.lastScale = 1.0
+                }
+            )
     }
 }

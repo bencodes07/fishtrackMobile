@@ -200,9 +200,9 @@ struct NumberInputWithSuffix: View {
     var body: some View {
         HStack {
             TextField(placeholder, text: $text)
-                .keyboardType(.numberPad)
+                .keyboardType(.decimalPad)
                 .onReceive(Just(text)) { newValue in
-                    let filtered = newValue.filter { "0123456789".contains($0) }
+                    let filtered = newValue.filter { "0123456789,.".contains($0) }
                     if filtered != newValue {
                         self.text = filtered
                     }
