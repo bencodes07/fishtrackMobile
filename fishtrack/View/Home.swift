@@ -6,7 +6,8 @@
 //
 
 import SwiftUI
-import SwiftUIImageViewer
+import LocationPicker
+import CoreLocation
 
 struct Home: View {
     @State var selectedFilter: Category = categories.first!
@@ -16,8 +17,12 @@ struct Home: View {
     @Environment(\.colorScheme) private var colorScheme
     
     @State private var showDetails: Bool = false
+    @State private var showDeleteConfirm: Bool = false
+    @State private var showLocation: Bool = false
     @State private var selectedFish: Fish?
     @State private var isImagePresented = false
+    
+    @State private var locationCoordinates: CLLocationCoordinate2D?
     
     var body: some View {
         VStack {
@@ -53,25 +58,18 @@ struct Home: View {
                             )
                             .font(.title)
                             .fontWeight(.bold)
-                            
-                            Button(action: {}, label: {
-                                Text("Add a Catch")
-                                    .font(.footnote)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white)
-                                    .padding(.vertical,10)
-                                    .padding(.horizontal)
-                                    .background(.blue)
-                                    .clipShape(Capsule())
-                            })
+                            .padding(.vertical, 20)
                         })
                         
-                        Spacer(minLength: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/)
+                        Spacer(minLength: 0)
                         
-                        Image("delivery-man")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: getRect().width / 3)
+                        VStack {
+                            Image("fish")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 50)
+                        }.frame(width: getRect().width / 3)
+                        
                     }
                     .padding()
                     .background(.thinMaterial)
@@ -79,13 +77,6 @@ struct Home: View {
                     .padding(.horizontal)
                     
                     Spacer()
-                    
-                    Button(action: {
-                        selectedFish = fishItems?.first
-                        showDetails = true
-                    }, label: {
-                        Text("Test Sheet")
-                    })
                     
                     Text("Filter")
                         .font(.title2)
@@ -215,46 +206,118 @@ struct Home: View {
                 if selectedFish != nil {
                     VStack(spacing: 12) {
                         ZStack(alignment: .topLeading) {
-                            AsyncImage(url: URL(string: selectedFish!.image)) { phase in
-                                switch phase {
-                                case .empty:
-                                    ProgressView()
-                                        .frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
-                                case .success(let image):
-                                    image.resizable()
-                                        .scaledToFit()
-                                        .frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
-                                        .clipped()
-                                        .cornerRadius(20)
-                                        .onTapGesture {
-                                            isImagePresented = true
-                                        }
-                                case .failure:
-                                    Image(systemName: "photo")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
-                                        .clipped()
-                                        .cornerRadius(20)
-                                @unknown default:
-                                    EmptyView().frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
-                                }
-                            }
                             Button(action: { showDetails = false }, label: {
                                 Image(systemName: "chevron.backward")
                                     .padding()
                                     .background(Color.white.opacity(0.7))
                                     .clipShape(Circle())
                             })
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding()
+                            
+                            Button(action: {
+                                showDeleteConfirm = true
+                            }, label: {
+                                Image(systemName: "trash")
+                                    .padding()
+                                    .clipShape(Circle())
+                                    .foregroundColor(.red)
+                            })
+                            .actionSheet(isPresented: $showDeleteConfirm, content: {
+                                ActionSheet(title: Text("Delete image?"),
+                                    message: Text("Are you sure you want to delete the current image"),
+                                    buttons: [
+                                        .cancel(),
+                                        .destructive(
+                                            Text("**Delete image**"),
+                                            action: {
+                                                Task {
+                                                    if(appUser != nil ) {
+                                                        do {
+                                                            try await viewModel.deleteItem(for: appUser!.uid, uuid: selectedFish!.uuid)
+                                                            showDetails = false
+                                                            showDeleteConfirm = false
+                                                            fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                                                            applyFilter()
+                                                        } catch {
+                                                            print("Error Deleting item")
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    ]
+                                )
+                            })
+                            .onDisappear() {
+                                showDeleteConfirm = false
+                            }
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                             .padding()
                         }
+                        AsyncImage(url: URL(string: selectedFish!.image)) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                                    .frame(maxWidth: getRect().width / 1.1, maxHeight: getRect().width / 1.1 * 0.8)
+                                    .cornerRadius(20)
+                            case .success(let image):
+                                image.resizable()
+                                    .scaledToFit()
+                                    .frame(maxWidth: getRect().width / 1.1, maxHeight: getRect().width / 1.1)
+                                    .clipped()
+                                    .onTapGesture {
+                                        isImagePresented = true
+                                    }
+                                    .cornerRadius(20)
+                            case .failure:
+                                Image(systemName: "photo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxWidth: getRect().width / 1.1, maxHeight: getRect().width / 1.1)
+                                    .clipped()
+                                    .cornerRadius(20)
+                            @unknown default:
+                                EmptyView().frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
+                            }
+                        }.cornerRadius(20)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("**Name**:  \(selectedFish!.name)")
+                            Text("**Description**:  \(selectedFish!.description)")
+                            Text("**Type**:  \(selectedFish!.catch_type)")
+                            Text("**Length**:  \(selectedFish!.catch_length.formatted(.number.precision(.fractionLength(1)))) cm")
+                            Text("**Weight**:  \(selectedFish!.catch_weight.formatted(.number.precision(.fractionLength(1)))) kg")
+                            Text("**Date**:  \(formatDate(selectedFish!.catch_date))")
+                            Text("**Location**: View Location").onTapGesture {
+                                showLocation = true
+                            }
+                        }.sheet(isPresented: $showLocation, content: {
+                            if let selectedFish = selectedFish {
+                                let components = selectedFish.catch_location.components(separatedBy: " ")
+                                if components.count == 2, let latitude = Double(components[0].replacingOccurrences(of: ",", with: ".")),
+                                   let longitude = Double(components[1].replacingOccurrences(of: ",", with: ".")) {
+                                    let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                                    let constantBinding = Binding<CLLocationCoordinate2D>(
+                                        get: { coordinates },
+                                        set: { _ in }
+                                    )
+                                    LocationPicker(instructions: "View your catch Location", coordinates: constantBinding, dismissOnSelection: true)
+                                } else {
+                                    Text("Invalid location data")
+                                }
+                            }
+                        })
+                        .padding()
+                        .frame(maxWidth: getRect().width / 1.1, alignment: .leading)
+                        .background(.black.opacity(0.05))
+                        .cornerRadius(20)
+                        Spacer()
                         .fullScreenCover(isPresented: $isImagePresented) {
                             if let selectedFish = selectedFish {
                                 FullScreenImageView(isPresented: $isImagePresented, imageUrl: URL(string: selectedFish.image)!)
                             }
                         }
                     }
-                    .frame(maxWidth: getRect().width / 1.5, alignment: .leading)
                 }
             })
         }
@@ -274,6 +337,23 @@ struct Home: View {
         default:
             break
         }
+    }
+    
+    private func formatDate(_ dateStr: String) -> String {
+        let isoDateFormatter = ISO8601DateFormatter()
+        isoDateFormatter.formatOptions = [.withInternetDateTime]
+        
+        guard let date = isoDateFormatter.date(from: dateStr) else {
+            return "Invalid date"
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy | HH:mm"
+        dateFormatter.timeZone = TimeZone.current
+        
+        let formattedDate = dateFormatter.string(from: date)
+        
+        return formattedDate
     }
 }
 

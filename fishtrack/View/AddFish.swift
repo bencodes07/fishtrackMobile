@@ -148,7 +148,7 @@ struct AddFish: View {
                 Alert(title: Text("Validation Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
         }.sheet(isPresented: $showSheet) {
-            LocationPicker(instructions: "Tap to select coordinates", coordinates: $coordinates, dismissOnSelection: true)
+            LocationPicker(instructions: "Tap to select coordinates", coordinates: $coordinates, dismissOnSelection: false)
         }
     }
     private func validateFields() -> Bool {

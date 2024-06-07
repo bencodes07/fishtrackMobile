@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct Settings: View {
     @Binding var appUser: AppUser?
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.requestReview) var requestReview
     
     var body: some View {
         VStack (alignment: .leading) {
@@ -33,7 +35,9 @@ struct Settings: View {
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Button(action: {}, label: {
+                Button(action: {
+                    requestReview()
+                }, label: {
                     Label(title: {
                         Text("Send Feedback")
                     }, icon: {

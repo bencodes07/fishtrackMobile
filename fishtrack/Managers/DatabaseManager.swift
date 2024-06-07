@@ -23,6 +23,10 @@ class DatabaseManager {
         try await client.from("fish").update(["image": imageUrl]).eq("uuid", value: uuid).execute()
     }
     
+    func deleteFishItem(uuid: String) async throws {
+        try await client.from("fish").delete().eq("uuid", value: uuid).execute()
+    }
+    
     func fetchFishItems(for uid: String) async throws -> [Fish] {
         let fish: [Fish] = try await client.from("fish").select().equals("user_uid", value: uid).order("created_at", ascending: false).execute().value
         print(fish)

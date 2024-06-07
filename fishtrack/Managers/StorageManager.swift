@@ -20,4 +20,8 @@ class StorageManager {
         print(result)
         return try await client.storage.from("images").createSignedURL(path: "\(uid)/\(uuid).jpg", expiresIn: 999999999999999999)
     }
+    
+    func deleteFishImage(for uid: String, uuid: String) async throws {
+        try await client.storage.from("images").remove(paths: ["\(uid)/\(uuid).jpg"])
+    }
 }

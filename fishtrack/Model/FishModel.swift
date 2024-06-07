@@ -19,6 +19,7 @@ struct Fish: Decodable, Identifiable {
     let image: String
     
     let user_uid: String
+    let uuid: String
     let id: Int
     let created_at: String
 }
@@ -81,6 +82,13 @@ class FishModel: ObservableObject {
                 print("Error in createItem: \(error)")
                 throw error
             }
+    }
+    
+    func deleteItem(for uid: String, uuid: String) async throws {
+        try await StorageManager.shared.deleteFishImage(for: uid, uuid: uuid)
+        print("Fish Image deleted")
+        try await DatabaseManager.shared.deleteFishItem(uuid: uuid)
+        print("Fish Item deleted")
     }
     
     func fetchItems(userUid: String) async throws -> [Fish] {
