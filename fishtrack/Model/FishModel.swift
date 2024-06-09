@@ -96,7 +96,7 @@ class FishModel: ObservableObject {
         return fish
     }
     
-    func deleteItem() async throws {
-        
+    func editItem(item: FishPayload) async throws {
+        try await DatabaseManager.shared.editFishItem(item: item)
     }
 }

@@ -8,19 +8,36 @@
 import SwiftUI
 import LocationPicker
 import CoreLocation
+import PhotosUI
+import UIKit
+import Combine
 
 struct Home: View {
     @State var selectedFilter: Category = categories.first!
     @State private var fishItems: [Fish]?
     @Binding var appUser: AppUser?
     @StateObject var viewModel = FishModel()
+    @StateObject var locationManager = LocationManager()
+    @State private var coordinates = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    @State private var item: PhotosPickerItem?
     @Environment(\.colorScheme) private var colorScheme
     
     @State private var showDetails: Bool = false
     @State private var showDeleteConfirm: Bool = false
     @State private var showLocation: Bool = false
+    @State private var showLocationEdit: Bool = false
+    @State private var showEdit: Bool = false
+    @State private var showEditError: Bool = false
     @State private var selectedFish: Fish?
-    @State private var isImagePresented = false
+    @State private var isImagePresented: Bool = false
+    
+    @State private var name: String = ""
+    @State private var type: String = ""
+    @State private var length: String = ""
+    @State private var weight: String = ""
+    @State private var description: String = ""
+    @State private var date = Date()
+    @State private var location: String = ""
     
     @State private var locationCoordinates: CLLocationCoordinate2D?
     
@@ -206,54 +223,70 @@ struct Home: View {
                 if selectedFish != nil {
                     VStack(spacing: 12) {
                         ZStack(alignment: .topLeading) {
-                            Button(action: { showDetails = false }, label: {
-                                Image(systemName: "chevron.backward")
-                                    .padding()
-                                    .background(Color.white.opacity(0.7))
-                                    .clipShape(Circle())
-                            })
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
-                            
-                            Button(action: {
-                                showDeleteConfirm = true
-                            }, label: {
-                                Image(systemName: "trash")
-                                    .padding()
-                                    .clipShape(Circle())
-                                    .foregroundColor(.red)
-                            })
-                            .actionSheet(isPresented: $showDeleteConfirm, content: {
-                                ActionSheet(title: Text("Delete image?"),
-                                    message: Text("Are you sure you want to delete the current image"),
-                                    buttons: [
-                                        .cancel(),
-                                        .destructive(
-                                            Text("**Delete image**"),
-                                            action: {
-                                                Task {
-                                                    if(appUser != nil ) {
-                                                        do {
-                                                            try await viewModel.deleteItem(for: appUser!.uid, uuid: selectedFish!.uuid)
-                                                            showDetails = false
-                                                            showDeleteConfirm = false
-                                                            fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
-                                                            applyFilter()
-                                                        } catch {
-                                                            print("Error Deleting item")
+                            HStack {
+                                Button(action: {
+                                    showDetails = false
+                                }, label: {
+                                    Image(systemName: "chevron.backward")
+                                        .padding()
+                                        .clipShape(Circle())
+                                })
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding()
+                                HStack (spacing: 0) {
+                                    Button(action: {
+                                        setEditSheetValues()
+                                        showEdit = true
+                                    }, label: {
+                                        Image(systemName: "pencil")
+                                            .padding()
+                                            .clipShape(Circle())
+                                            .foregroundColor(.blue)
+                                    })
+                                    .padding(.vertical)
+                                    
+                                    Button(action: {
+                                        showDeleteConfirm = true
+                                    }, label: {
+                                        Image(systemName: "trash")
+                                            .padding()
+                                            .clipShape(Circle())
+                                            .foregroundColor(.red)
+                                    })
+                                    .actionSheet(isPresented: $showDeleteConfirm, content: {
+                                        // Delete confirmation
+                                        ActionSheet(title: Text("Delete image?"),
+                                            message: Text("Are you sure you want to delete the current image"),
+                                            buttons: [
+                                                .cancel(),
+                                                .destructive(
+                                                    Text("**Delete image**"),
+                                                    action: {
+                                                        Task {
+                                                            if(appUser != nil ) {
+                                                                do {
+                                                                    try await viewModel.deleteItem(for: appUser!.uid, uuid: selectedFish!.uuid)
+                                                                    showDetails = false
+                                                                    showDeleteConfirm = false
+                                                                    fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                                                                    applyFilter()
+                                                                } catch {
+                                                                    print("Error Deleting item")
+                                                                }
+                                                            }
                                                         }
                                                     }
-                                                }
-                                            }
+                                                )
+                                            ]
                                         )
-                                    ]
-                                )
-                            })
-                            .onDisappear() {
-                                showDeleteConfirm = false
+                                    })
+                                    .onDisappear() {
+                                        showDeleteConfirm = false
+                                    }
+                                    .padding(.vertical)
+                                    .padding(.trailing)
+                                }
                             }
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .padding()
                         }
                         AsyncImage(url: URL(string: selectedFish!.image)) { phase in
                             switch phase {
@@ -286,12 +319,13 @@ struct Home: View {
                             Text("**Description**:  \(selectedFish!.description)")
                             Text("**Type**:  \(selectedFish!.catch_type)")
                             Text("**Length**:  \(selectedFish!.catch_length.formatted(.number.precision(.fractionLength(1)))) cm")
-                            Text("**Weight**:  \(selectedFish!.catch_weight.formatted(.number.precision(.fractionLength(1)))) kg")
+                            Text("**Weight**:  \(selectedFish!.catch_weight.formatted(.number.precision(.fractionLength(1)))) lb")
                             Text("**Date**:  \(formatDate(selectedFish!.catch_date))")
                             Text("**Location**: View Location").onTapGesture {
                                 showLocation = true
                             }
                         }.sheet(isPresented: $showLocation, content: {
+                            // Location Viewer
                             if let selectedFish = selectedFish {
                                 let components = selectedFish.catch_location.components(separatedBy: " ")
                                 if components.count == 2, let latitude = Double(components[0].replacingOccurrences(of: ",", with: ".")),
@@ -313,10 +347,83 @@ struct Home: View {
                         .cornerRadius(20)
                         Spacer()
                         .fullScreenCover(isPresented: $isImagePresented) {
+                            // Full screen image preview
                             if let selectedFish = selectedFish {
                                 FullScreenImageView(isPresented: $isImagePresented, imageUrl: URL(string: selectedFish.image)!)
                             }
                         }
+                        .sheet(isPresented: $showEdit, content: {
+                            VStack(spacing: 12) {
+                                ZStack(alignment: .topLeading) {
+                                    HStack {
+                                        Button(action: { showEdit = false }, label: {
+                                            Image(systemName: "chevron.backward")
+                                                .padding()
+                                                .clipShape(Circle())
+                                        })
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding()
+                                        HStack (spacing: 0) {
+                                            Button(action: {
+                                                saveEdits()
+                                            }, label: {
+                                                Text("Save")
+                                                    .padding()
+                                            })
+                                            .padding(.vertical)
+                                            .padding(.trailing)
+                                        }
+                                    }
+                                }
+                                    VStack(alignment: .leading, spacing: 12) {
+                                        Text("Edit Fish Details").font(.title2).fontWeight(.bold)
+                                        LabeledContent {
+                                            TextField("Name *", text: $name)
+                                                .padding()
+                                                .background(.gray.opacity(0.15))
+                                                .cornerRadius(10.0)
+                                        } label: {
+                                            Text("Name *").frame(maxWidth: 120, alignment: .leading)
+                                        }
+                                        
+                                        LabeledContent {
+                                            TextField("Fish Type *", text: $type)
+                                                .padding()
+                                                .background(.gray.opacity(0.15))
+                                                .cornerRadius(10.0)
+                                        } label: {
+                                          Text("Fish Type *").frame(maxWidth: 120, alignment: .leading)
+                                        }
+                                        
+                                        LabeledContent {
+                                            NumberInputWithSuffix(text: $length, placeholder: "Fish Length *", suffix: "cm")
+                                        } label: {
+                                          Text("Fish Length *").frame(maxWidth: 120, alignment: .leading)
+                                        }
+                                        
+                                        LabeledContent {
+                                            NumberInputWithSuffix(text: $weight, placeholder: "Fish Weight *", suffix: "lb")
+                                        } label: {
+                                          Text("Fish Weight *").frame(maxWidth: 120, alignment: .leading)
+                                        }
+
+                                        LabeledContent {
+                                            TextField("Description", text: $description)
+                                                .padding()
+                                                .background(.gray.opacity(0.15))
+                                                .cornerRadius(10.0)
+                                        } label: {
+                                            Text("Description").frame(maxWidth: 120, alignment: .leading)
+                                        }
+                                        
+                                        Spacer()
+                                    }
+                                    .alert(isPresented: $showEditError) {
+                                        Alert(title: Text("Invalid Inputs"), message: Text("Please fill out all of the required fields"), dismissButton: .default(Text("Okay")))
+                                    }
+                                    .padding()
+                            }
+                        })
                     }
                 }
             })
@@ -354,6 +461,53 @@ struct Home: View {
         let formattedDate = dateFormatter.string(from: date)
         
         return formattedDate
+    }
+    
+    private func setEditSheetValues() {
+        if let selectedFish = selectedFish {
+            name = selectedFish.name
+            type = selectedFish.catch_type
+            length = String(selectedFish.catch_length)
+            weight = String(selectedFish.catch_weight)
+            description = selectedFish.description
+        }
+    }
+        
+    private func saveEdits() {
+        guard let selectedFish = selectedFish else { return }
+        
+        if(name.isEmpty || type.isEmpty || length.isEmpty || weight.isEmpty) {
+            return showEditError = true
+        }
+        
+        // Update the fish object with the edited values
+        let updatedFish = FishPayload(
+            name: name,
+            description: description,
+            catch_type: type,
+            catch_length: length,
+            catch_weight: weight,
+            catch_date: selectedFish.catch_date,
+            catch_location: selectedFish.catch_location,
+            image: selectedFish.image,
+            user_uid: selectedFish.user_uid,
+            uuid: selectedFish.uuid
+        )
+        
+        // Save the updated fish object
+        Task {
+            if(appUser != nil ) {
+                do {
+                    try await viewModel.editItem(item: updatedFish)
+                    showEdit = false
+                    showDetails = false
+                    fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                    applyFilter()
+                } catch {
+                    print("Error updating item")
+                }
+            }
+        }
     }
 }
 

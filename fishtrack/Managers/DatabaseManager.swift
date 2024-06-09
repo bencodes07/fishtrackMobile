@@ -23,6 +23,10 @@ class DatabaseManager {
         try await client.from("fish").update(["image": imageUrl]).eq("uuid", value: uuid).execute()
     }
     
+    func editFishItem(item: FishPayload) async throws {
+        try await client.from("fish").update(item).eq("uuid", value: item.uuid).execute()
+    }
+    
     func deleteFishItem(uuid: String) async throws {
         try await client.from("fish").delete().eq("uuid", value: uuid).execute()
     }
