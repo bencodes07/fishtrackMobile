@@ -23,11 +23,18 @@ struct Home: View {
     @Environment(\.colorScheme) private var colorScheme
     
     @State private var showDetails: Bool = false
+    
     @State private var showDeleteConfirm: Bool = false
+    
     @State private var showLocation: Bool = false
     @State private var showLocationEdit: Bool = false
+    
     @State private var showEdit: Bool = false
     @State private var showEditError: Bool = false
+    
+    @State private var showTags: Bool = false
+    @State private var showTagsAdd: Bool = false
+    
     @State private var selectedFish: Fish?
     @State private var isImagePresented: Bool = false
     
@@ -52,8 +59,58 @@ struct Home: View {
                 
                 Spacer()
                 
-                Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
-                    Image(systemName: "circle.grid.2x2")
+                Button(action: { showTags = true }, label: {
+                    Image(systemName: "tag")
+                        .font(.title3)
+                        .padding(.trailing)
+                        .foregroundColor(.blue)
+                })
+                .sheet(isPresented: $showTags, content: {
+                    VStack(spacing: 12) {
+                        ZStack(alignment: .topLeading) {
+                            HStack {
+                                Button(action: {
+                                    showTags = false
+                                }, label: {
+                                    Image(systemName: "chevron.backward")
+                                        .padding()
+                                        .clipShape(Circle())
+                                })
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding()
+                                Button(action: {
+                                    showTagsAdd = true
+                                }, label: {
+                                    Image(systemName: "plus.circle.fill")
+                                        .padding()
+                                        .font(.title2)
+                                        .clipShape(Circle())
+                                        .foregroundColor(.blue)
+                                })
+                                .padding()
+                                .sheet(isPresented: $showTagsAdd, content: {
+                                    VStack(spacing: 12) {
+                                        ZStack(alignment: .topLeading) {
+                                            HStack {
+                                                Button(action: {
+                                                    showTagsAdd = false
+                                                }, label: {
+                                                    Image(systemName: "chevron.backward")
+                                                        .padding()
+                                                        .clipShape(Circle())
+                                                })
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .padding()
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }
+                })
+                Button(action: {}, label: {
+                    Image(systemName: "magnifyingglass")
                         .font(.title2)
                         .padding(10)
                         .background(colorScheme == .dark ? .blue.opacity(0.35) : .blue.opacity(0.12))
