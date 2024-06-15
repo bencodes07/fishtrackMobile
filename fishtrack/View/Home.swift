@@ -32,7 +32,7 @@ struct Home: View {
     @State private var showEdit: Bool = false
     @State private var showEditError: Bool = false
     
-    @State private var showTags: Bool = true
+    @State private var showTags: Bool = false
     @State private var showTagsAdd: Bool = false
     @State private var tags: [String] = ["SwiftUI", "Swift", "iOS", "Ems", "Kapitale Fische", "Franz Felix See", "Markus", "Zuhause"]
     @State private var selectedTags: [String] = ["Apple"]
