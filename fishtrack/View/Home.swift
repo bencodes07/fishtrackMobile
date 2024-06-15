@@ -91,82 +91,80 @@ struct Home: View {
                 })
                 .sheet(isPresented: $showTags, content: {
                     VStack(alignment: .leading, spacing: 12) {
-                        ZStack(alignment: .topLeading) {
-                            HStack {
-                                Button(action: {
-                                    showTags = false
-                                }, label: {
-                                    Image(systemName: "chevron.backward")
-                                        .padding()
-                                        .clipShape(Circle())
-                                })
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                Button(action: {
-                                    newTagName = ""
-                                    showTagsAdd = true
-                                }, label: {
-                                    Image(systemName: "plus.circle.fill")
-                                        .padding()
-                                        .font(.title2)
-                                        .clipShape(Circle())
-                                        .foregroundColor(.blue)
-                                })
-                                .alert("Create a new Tag", isPresented: $showTagsAdd) {
-                                    TextField(text: $newTagName.max(25)) {}
-                                    Button("Cancel") {
-                                        showTagsAdd = false
-                                    }
-                                    Button("Submit") {
-                                        if newTagName != "" {
-                                            tags.append(newTagName)
+                        VStack {
+                            ZStack(alignment: .topLeading) {
+                                HStack {
+                                    Button(action: {
+                                        showTags = false
+                                    }, label: {
+                                        Image(systemName: "chevron.backward")
+                                            .padding()
+                                            .clipShape(Circle())
+                                    })
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    Button(action: {
+                                        newTagName = ""
+                                        showTagsAdd = true
+                                    }, label: {
+                                        Image(systemName: "plus.circle.fill")
+                                            .padding()
+                                            .font(.title2)
+                                            .clipShape(Circle())
+                                            .foregroundColor(.blue)
+                                    })
+                                    .alert("Create a new Tag", isPresented: $showTagsAdd) {
+                                        TextField(text: $newTagName.max(25)) {}
+                                        Button("Cancel") {
+                                            showTagsAdd = false
                                         }
-                                    }
-                                    
-                                } message: {
-                                    Text("Enter new Tag name (Max. 25 Characters)")
-                                }
-                            }
-                            .background(.white)
-                            .padding(.top)
-                            .padding(.horizontal)
-                        }
-                        .background(.white)
-                        .zIndex(1)
-                        ScrollView(.horizontal) {
-                            HStack (spacing: 12) {
-                                ForEach(selectedTags, id: \.self) { tag in
-                                    TagView(tag, .blue, "checkmark")
-                                        .matchedGeometryEffect(id: tag, in: animationNamespace)
-                                        .onTapGesture {
-                                            withAnimation(.snappy) {
-                                                selectedTags.removeAll(where: { $0 == tag})
+                                        Button("Submit") {
+                                            if newTagName != "" {
+                                                tags.append(newTagName)
                                             }
                                         }
+                                        
+                                    } message: {
+                                        Text("Enter new Tag name (Max. 25 Characters)")
+                                    }
                                 }
+                                .padding(.top)
+                                .padding(.horizontal)
                             }
-                            .padding(.horizontal, 15)
-                            .frame(height: 35)
-                            .padding(.vertical, 0)
-                            .background(.white)
-                            .zIndex(1)
+                            
+                            ScrollView(.horizontal) {
+                                HStack (spacing: 12) {
+                                    ForEach(selectedTags, id: \.self) { tag in
+                                        TagView(tag, .blue, "checkmark")
+                                            .matchedGeometryEffect(id: tag, in: animationNamespace)
+                                            .onTapGesture {
+                                                withAnimation(.snappy) {
+                                                    selectedTags.removeAll(where: { $0 == tag})
+                                                }
+                                            }
+                                    }
+                                }
+                                .padding(.horizontal, 15)
+                                .padding(.vertical, 0)
+                                .background(colorScheme == .light ? .white : .black)
+                            }
+                            .scrollDisabled(true)
+                            .scrollIndicators(.hidden)
+                            .overlay(content: {
+                                if selectedTags.isEmpty {
+                                    Text("Select at least 1 Tag")
+                                        .font(.callout)
+                                        .foregroundStyle(.gray)
+                                        .padding(.bottom)
+                                }
+                            })
                         }
-                        .scrollDisabled(true)
-                        .scrollIndicators(.hidden)
-                        .overlay(content: {
-                            if selectedTags.isEmpty {
-                                Text("Select at least 1 Tag")
-                                    .font(.callout)
-                                    .foregroundStyle(.gray)
-                            }
-                        })
-                        .background(.white)
+                        .background(colorScheme == .light ? .white : .black)
                         .zIndex(1)
-                        
                         
                         ScrollView(.vertical) {
                             TagLayout(alignment: .center, spacing: 10) {
                                 ForEach(tags.filter { !selectedTags.contains($0)}, id: \.self) { tag in
-                                    TagView(tag, .blue, "plus")
+                                    TagView(tag, .blue.opacity(0.75), "plus")
                                         .matchedGeometryEffect(id: tag, in: animationNamespace)
                                         .onTapGesture {
                                             withAnimation(.snappy) {
@@ -178,7 +176,7 @@ struct Home: View {
                         }
                         .scrollClipDisabled(true)
                         .scrollIndicators(.hidden)
-                        .background(.black.opacity(0.03))
+                        .background(colorScheme == .light ? .black.opacity(0.03) : .white.opacity(0.05))
                         .zIndex(0)
                         
                         ZStack {
@@ -197,11 +195,11 @@ struct Home: View {
                             .opacity(selectedTags.count <= 0 ? 0.5 : 1)
                             .padding()
                         }
-                        .background(.white)
+                        .background(colorScheme == .light ? .white : .black)
                         .zIndex(2)
                         
-                    }
-                }).background(.white).zIndex(1)
+                    }.background(colorScheme == .light ? .white : .black)
+                })
                 Button(action: {}, label: {
                     Image(systemName: "magnifyingglass")
                         .font(.title2)
