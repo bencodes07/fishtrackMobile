@@ -123,7 +123,7 @@ struct Home: View {
                                     }
                                     
                                 } message: {
-                                    Text("Enter new Tag name")
+                                    Text("Enter new Tag name (Max. 25 Characters)")
                                 }
                             }
                             .background(.white)
@@ -172,7 +172,7 @@ struct Home: View {
                                             withAnimation(.snappy) {
                                                 selectedTags.insert(tag, at: 0)
                                             }
-                                        }
+                                        }.zIndex(0)
                                 }
                             }.padding(15)
                         }
@@ -201,7 +201,7 @@ struct Home: View {
                         .zIndex(2)
                         
                     }
-                })
+                }).background(.white).zIndex(1)
                 Button(action: {}, label: {
                     Image(systemName: "magnifyingglass")
                         .font(.title2)
