@@ -32,8 +32,11 @@ struct Home: View {
     @State private var showEdit: Bool = false
     @State private var showEditError: Bool = false
     
-    @State private var showTags: Bool = false
+    @State private var showTags: Bool = true
     @State private var showTagsAdd: Bool = false
+    @State private var tags: [String] = ["SwiftUI", "Swift", "iOS", "Ems", "Kapitale Fische", "Franz Felix See", "Markus", "Zuhause"]
+    @State private var selectedTags: [String] = ["Apple"]
+    @State private var newTagName: String = ""
     
     @State private var selectedFish: Fish?
     @State private var isImagePresented: Bool = false
@@ -47,6 +50,27 @@ struct Home: View {
     @State private var location: String = ""
     
     @State private var locationCoordinates: CLLocationCoordinate2D?
+    
+    @ViewBuilder
+    func TagView(_ tag: String, _ color: Color, _ icon: String) -> some View {
+        HStack (spacing: 10) {
+            Text(tag)
+                .font(.callout)
+                .fontWeight(.semibold)
+            
+            Image(systemName: icon)
+        }
+        .frame(height: 35)
+        .foregroundStyle(.white)
+        .padding(.horizontal, 15)
+        .background {
+            if icon == "checkmark" {
+                Capsule().fill(color.gradient)
+            } else {
+                Capsule().fill(color)
+            }
+        }
+    }
     
     var body: some View {
         VStack {
@@ -66,7 +90,7 @@ struct Home: View {
                         .foregroundColor(.blue)
                 })
                 .sheet(isPresented: $showTags, content: {
-                    VStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 12) {
                         ZStack(alignment: .topLeading) {
                             HStack {
                                 Button(action: {
@@ -77,8 +101,8 @@ struct Home: View {
                                         .clipShape(Circle())
                                 })
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding()
                                 Button(action: {
+                                    newTagName = ""
                                     showTagsAdd = true
                                 }, label: {
                                     Image(systemName: "plus.circle.fill")
@@ -87,26 +111,95 @@ struct Home: View {
                                         .clipShape(Circle())
                                         .foregroundColor(.blue)
                                 })
-                                .padding()
-                                .sheet(isPresented: $showTagsAdd, content: {
-                                    VStack(spacing: 12) {
-                                        ZStack(alignment: .topLeading) {
-                                            HStack {
-                                                Button(action: {
-                                                    showTagsAdd = false
-                                                }, label: {
-                                                    Image(systemName: "chevron.backward")
-                                                        .padding()
-                                                        .clipShape(Circle())
-                                                })
-                                                .frame(maxWidth: .infinity, alignment: .leading)
-                                                .padding()
-                                            }
+                                .alert("Create a new Tag", isPresented: $showTagsAdd) {
+                                    TextField(text: $newTagName.max(25)) {}
+                                    Button("Cancel") {
+                                        showTagsAdd = false
+                                    }
+                                    Button("Submit") {
+                                        if newTagName != "" {
+                                            tags.append(newTagName)
                                         }
                                     }
-                                })
+                                    
+                                } message: {
+                                    Text("Enter new Tag name")
+                                }
                             }
+                            .background(.white)
+                            .padding(.top)
+                            .padding(.horizontal)
                         }
+                        .background(.white)
+                        .zIndex(1)
+                        ScrollView(.horizontal) {
+                            HStack (spacing: 12) {
+                                ForEach(selectedTags, id: \.self) { tag in
+                                    TagView(tag, .blue, "checkmark")
+                                        .matchedGeometryEffect(id: tag, in: animationNamespace)
+                                        .onTapGesture {
+                                            withAnimation(.snappy) {
+                                                selectedTags.removeAll(where: { $0 == tag})
+                                            }
+                                        }
+                                }
+                            }
+                            .padding(.horizontal, 15)
+                            .frame(height: 35)
+                            .padding(.vertical, 0)
+                            .background(.white)
+                            .zIndex(1)
+                        }
+                        .scrollDisabled(true)
+                        .scrollIndicators(.hidden)
+                        .overlay(content: {
+                            if selectedTags.isEmpty {
+                                Text("Select at least 1 Tag")
+                                    .font(.callout)
+                                    .foregroundStyle(.gray)
+                            }
+                        })
+                        .background(.white)
+                        .zIndex(1)
+                        
+                        
+                        ScrollView(.vertical) {
+                            TagLayout(alignment: .center, spacing: 10) {
+                                ForEach(tags.filter { !selectedTags.contains($0)}, id: \.self) { tag in
+                                    TagView(tag, .blue, "plus")
+                                        .matchedGeometryEffect(id: tag, in: animationNamespace)
+                                        .onTapGesture {
+                                            withAnimation(.snappy) {
+                                                selectedTags.insert(tag, at: 0)
+                                            }
+                                        }
+                                }
+                            }.padding(15)
+                        }
+                        .scrollClipDisabled(true)
+                        .scrollIndicators(.hidden)
+                        .background(.black.opacity(0.03))
+                        .zIndex(0)
+                        
+                        ZStack {
+                            Button(action: {}, label: {
+                                Text("Continue")
+                                    .fontWeight(.semibold)
+                                    .padding(.vertical, 15)
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundStyle(.white)
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(.blue)
+                                    }
+                            })
+                            .disabled(selectedTags.count <= 0)
+                            .opacity(selectedTags.count <= 0 ? 0.5 : 1)
+                            .padding()
+                        }
+                        .background(.white)
+                        .zIndex(2)
+                        
                     }
                 })
                 Button(action: {}, label: {
@@ -575,6 +668,17 @@ struct Home: View {
 extension View {
     func getRect()->CGRect {
         return UIScreen.main.bounds
+    }
+}
+
+extension Binding where Value == String {
+    func max(_ limit: Int) -> Self {
+        if self.wrappedValue.count > limit {
+            DispatchQueue.main.async {
+                self.wrappedValue = String(self.wrappedValue.prefix(limit))
+            }
+        }
+        return self
     }
 }
 

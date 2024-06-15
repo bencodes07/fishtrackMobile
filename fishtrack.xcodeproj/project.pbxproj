@@ -40,6 +40,7 @@
 		B3D07BAF2C0A24E3007B3B89 /* fishtrackUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07BAE2C0A24E3007B3B89 /* fishtrackUITests.swift */; };
 		B3D07BB12C0A24E3007B3B89 /* fishtrackUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07BB02C0A24E3007B3B89 /* fishtrackUITestsLaunchTests.swift */; };
 		B3D07BC42C0A26C8007B3B89 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D07BC32C0A26C8007B3B89 /* Home.swift */; };
+		B3D0C2CB2C1DAE2B000A4174 /* TagLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D0C2CA2C1DAE2B000A4174 /* TagLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		B3D07BAE2C0A24E3007B3B89 /* fishtrackUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fishtrackUITests.swift; sourceTree = "<group>"; };
 		B3D07BB02C0A24E3007B3B89 /* fishtrackUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fishtrackUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		B3D07BC32C0A26C8007B3B89 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
+		B3D0C2CA2C1DAE2B000A4174 /* TagLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +189,7 @@
 		B3D07B902C0A24E1007B3B89 /* fishtrack */ = {
 			isa = PBXGroup;
 			children = (
+				B3D0C2C72C1DADDC000A4174 /* Layout */,
 				B3967B432C0BBA5C0034161F /* Managers */,
 				B3967B422C0BB29C0034161F /* Info.plist */,
 				B367A48E2C0B75E40073F75F /* fishtrack.entitlements */,
@@ -246,6 +249,14 @@
 				B3967B4C2C0C5A850034161F /* Onboarding */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		B3D0C2C72C1DADDC000A4174 /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				B3D0C2CA2C1DAE2B000A4174 /* TagLayout.swift */,
+			);
+			path = Layout;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -394,6 +405,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D0C2CB2C1DAE2B000A4174 /* TagLayout.swift in Sources */,
 				B3BB8C172C0C8D9100310F2F /* FormValidator.swift in Sources */,
 				B3967B502C0C5AC80034161F /* Splash.swift in Sources */,
 				B367A48D2C0B64160073F75F /* SignInApple.swift in Sources */,
