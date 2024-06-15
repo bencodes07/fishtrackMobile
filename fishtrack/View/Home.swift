@@ -35,8 +35,8 @@ struct Home: View {
     
     @State private var showTags: Bool = false
     @State private var showTagsAdd: Bool = false
-    @State private var tags: [String] = ["SwiftUI", "Swift", "iOS", "Ems", "Kapitale Fische", "Franz Felix See", "Markus", "Zuhause"]
-    @State private var selectedTags: [String] = ["Apple"]
+    @State private var tags: [Tag] = []
+    @State private var selectedTags: [Tag] = []
     @State private var newTagName: String = ""
     
     @State private var selectedFish: Fish?
@@ -125,7 +125,15 @@ struct Home: View {
                                             }
                                             Button("Submit") {
                                                 if newTagName != "" {
-                                                    tags.append(newTagName)
+                                                    Task {
+                                                        if(appUser != nil ) {
+                                                            do {
+                                                                try await DatabaseManager.shared.createTag(item: TagPayload(text: newTagName, uid: appUser!.uid))
+                                                            } catch {
+                                                                print(error)
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                             
@@ -140,13 +148,13 @@ struct Home: View {
                                 ScrollView(.horizontal) {
                                     HStack (spacing: 12) {
                                         ForEach(selectedTags, id: \.self) { tag in
-                                            TagView(tag, .blue, "checkmark")
+                                            TagView(tag.text, .blue, "checkmark")
                                                 .matchedGeometryEffect(id: tag, in: animationNamespace)
                                                 .onTapGesture {
                                                     let impactMed = UIImpactFeedbackGenerator(style: .soft)
                                                     impactMed.impactOccurred()
                                                     withAnimation(.snappy) {
-                                                        selectedTags.removeAll(where: { $0 == tag})
+                                                        selectedTags.removeAll(where: { $0.text == tag.text })
                                                     }
                                                 }
                                         }
@@ -171,8 +179,8 @@ struct Home: View {
                             
                             ScrollView(.vertical) {
                                 TagLayout(alignment: .center, spacing: 10) {
-                                    ForEach(tags.filter { !selectedTags.contains($0)}, id: \.self) { tag in
-                                        TagView(tag, .blue.opacity(0.75), "plus")
+                                    ForEach(tags.filter { !selectedTags.contains($0) }, id: \.self) { tag in
+                                        TagView(tag.text, .blue.opacity(0.75), "plus")
                                             .matchedGeometryEffect(id: tag, in: animationNamespace)
                                             .onTapGesture {
                                                 let impactMed = UIImpactFeedbackGenerator(style: .soft)
@@ -182,7 +190,8 @@ struct Home: View {
                                                 }
                                             }.zIndex(0)
                                     }
-                                }.padding(15)
+                                }
+                                .padding(15)
                             }
                             .scrollClipDisabled(true)
                             .scrollIndicators(.hidden)
@@ -209,7 +218,17 @@ struct Home: View {
                             .zIndex(2)
                             
                         }.background(colorScheme == .light ? .white : .black)
-                    })
+                    }).onAppear() {
+                        Task {
+                            if(appUser != nil ) {
+                                do {
+                                    tags = try await DatabaseManager.shared.fetchTags(for: appUser!.uid)
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        }
+                    }
                     Button(action: {
                         withAnimation(.snappy) {
                             showSearchbar.toggle()

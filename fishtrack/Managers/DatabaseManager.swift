@@ -8,6 +8,18 @@
 import Foundation
 import Supabase
 
+struct TagPayload: Codable {
+    let text: String
+    let uid: String
+}
+
+struct Tag: Decodable, Identifiable, Hashable {
+    let text: String
+    let id: String
+    let uid: String
+    let created_at: String
+}
+
 class DatabaseManager {
     static let shared = DatabaseManager()
     
@@ -35,5 +47,18 @@ class DatabaseManager {
         let fish: [Fish] = try await client.from("fish").select().equals("user_uid", value: uid).order("created_at", ascending: false).execute().value
         print(fish)
         return fish
+    }
+    
+    
+    func createTag(item: TagPayload) async throws {
+        try await client.from("tags").insert(item).execute()
+    }
+    
+    func fetchTags(for uid: String) async throws -> [Tag] {
+        return try await client.from("tags").select().equals("uid", value: uid).order("created_at", ascending: false).execute().value
+    }
+    
+    func fetchTagById(id: String) async throws -> Tag {
+        return try await client.from("tags").select().equals("id", value: id).execute().value
     }
 }

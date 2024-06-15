@@ -17,6 +17,7 @@ struct Fish: Decodable, Identifiable {
     let catch_date: String
     let catch_location: String
     let image: String
+    let tags: [String]
     
     let user_uid: String
     let uuid: String
