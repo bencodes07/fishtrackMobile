@@ -43,17 +43,7 @@ struct AddFish: View {
                     .fontWeight(.black)
                     .foregroundColor(.blue)
                     .padding(.leading, 4)
-                
                 Spacer()
-                
-                Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
-                    Image(systemName: "circle.grid.2x2")
-                        .font(.title2)
-                        .padding(10)
-                        .background(colorScheme == .dark ? .blue.opacity(0.35) : .blue.opacity(0.12))
-                        .foregroundColor(.blue)
-                        .cornerRadius(8)
-                })
             }
             .padding()
             

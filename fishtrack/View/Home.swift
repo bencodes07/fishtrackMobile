@@ -15,6 +15,7 @@ import Combine
 struct Home: View {
     @State var selectedFilter: Category = categories.first!
     @State private var fishItems: [Fish]?
+    @State private var originalFishItems: [Fish]?
     @Binding var appUser: AppUser?
     @StateObject var viewModel = FishModel()
     @StateObject var locationManager = LocationManager()
@@ -40,6 +41,10 @@ struct Home: View {
     
     @State private var selectedFish: Fish?
     @State private var isImagePresented: Bool = false
+    
+    @State private var showSearchbar: Bool = false
+    @FocusState var searchFocused: Bool
+    @State private var searchValue: String = ""
     
     @State private var name: String = ""
     @State private var type: String = ""
@@ -74,142 +79,173 @@ struct Home: View {
     
     var body: some View {
         VStack {
-            HStack () {
-                Text("fishtrack.")
-                    .font(.title2)
-                    .fontWeight(.black)
-                    .foregroundColor(.blue)
-                    .padding(.leading, 4)
-                
-                Spacer()
-                
-                Button(action: { showTags = true }, label: {
-                    Image(systemName: "tag")
-                        .font(.title3)
-                        .padding(.trailing)
+            VStack {
+                HStack () {
+                    Text("fishtrack.")
+                        .font(.title2)
+                        .fontWeight(.black)
                         .foregroundColor(.blue)
-                })
-                .sheet(isPresented: $showTags, content: {
-                    VStack(alignment: .leading, spacing: 12) {
-                        VStack {
-                            ZStack(alignment: .topLeading) {
-                                HStack {
-                                    Button(action: {
-                                        showTags = false
-                                    }, label: {
-                                        Image(systemName: "chevron.backward")
-                                            .padding()
-                                            .clipShape(Circle())
-                                    })
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    Button(action: {
-                                        newTagName = ""
-                                        showTagsAdd = true
-                                    }, label: {
-                                        Image(systemName: "plus.circle.fill")
-                                            .padding()
-                                            .font(.title2)
-                                            .clipShape(Circle())
-                                            .foregroundColor(.blue)
-                                    })
-                                    .alert("Create a new Tag", isPresented: $showTagsAdd) {
-                                        TextField(text: $newTagName.max(25)) {}
-                                        Button("Cancel") {
-                                            showTagsAdd = false
-                                        }
-                                        Button("Submit") {
-                                            if newTagName != "" {
-                                                tags.append(newTagName)
+                        .padding(.leading, 4)
+                    
+                    Spacer()
+                    
+                    Button(action: { showTags = true }, label: {
+                        Image(systemName: "tag")
+                            .font(.title3)
+                            .padding(.trailing)
+                            .foregroundColor(.blue)
+                    })
+                    .sheet(isPresented: $showTags, content: {
+                        VStack(alignment: .leading, spacing: 12) {
+                            VStack {
+                                ZStack(alignment: .topLeading) {
+                                    HStack {
+                                        Button(action: {
+                                            showTags = false
+                                        }, label: {
+                                            Image(systemName: "chevron.backward")
+                                                .padding()
+                                                .clipShape(Circle())
+                                        })
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        Button(action: {
+                                            newTagName = ""
+                                            showTagsAdd = true
+                                        }, label: {
+                                            Image(systemName: "plus.circle.fill")
+                                                .padding()
+                                                .font(.title2)
+                                                .clipShape(Circle())
+                                                .foregroundColor(.blue)
+                                        })
+                                        .alert("Create a new Tag", isPresented: $showTagsAdd) {
+                                            TextField(text: $newTagName.max(25)) {}
+                                            Button("Cancel") {
+                                                showTagsAdd = false
                                             }
-                                        }
-                                        
-                                    } message: {
-                                        Text("Enter new Tag name (Max. 25 Characters)")
-                                    }
-                                }
-                                .padding(.top)
-                                .padding(.horizontal)
-                            }
-                            
-                            ScrollView(.horizontal) {
-                                HStack (spacing: 12) {
-                                    ForEach(selectedTags, id: \.self) { tag in
-                                        TagView(tag, .blue, "checkmark")
-                                            .matchedGeometryEffect(id: tag, in: animationNamespace)
-                                            .onTapGesture {
-                                                withAnimation(.snappy) {
-                                                    selectedTags.removeAll(where: { $0 == tag})
+                                            Button("Submit") {
+                                                if newTagName != "" {
+                                                    tags.append(newTagName)
                                                 }
                                             }
+                                            
+                                        } message: {
+                                            Text("Enter new Tag name (Max. 25 Characters)")
+                                        }
                                     }
+                                    .padding(.top)
+                                    .padding(.horizontal)
                                 }
-                                .padding(.horizontal, 15)
-                                .padding(.vertical, 0)
-                                .background(colorScheme == .light ? .white : .black)
+                                
+                                ScrollView(.horizontal) {
+                                    HStack (spacing: 12) {
+                                        ForEach(selectedTags, id: \.self) { tag in
+                                            TagView(tag, .blue, "checkmark")
+                                                .matchedGeometryEffect(id: tag, in: animationNamespace)
+                                                .onTapGesture {
+                                                    let impactMed = UIImpactFeedbackGenerator(style: .soft)
+                                                    impactMed.impactOccurred()
+                                                    withAnimation(.snappy) {
+                                                        selectedTags.removeAll(where: { $0 == tag})
+                                                    }
+                                                }
+                                        }
+                                    }
+                                    .padding(.horizontal, 15)
+                                    .padding(.vertical, 0)
+                                    .background(colorScheme == .light ? .white : .black)
+                                }
+                                .scrollDisabled(true)
+                                .scrollIndicators(.hidden)
+                                .overlay(content: {
+                                    if selectedTags.isEmpty {
+                                        Text("Select at least 1 Tag")
+                                            .font(.callout)
+                                            .foregroundStyle(.gray)
+                                            .padding(.bottom)
+                                    }
+                                })
                             }
-                            .scrollDisabled(true)
-                            .scrollIndicators(.hidden)
-                            .overlay(content: {
-                                if selectedTags.isEmpty {
-                                    Text("Select at least 1 Tag")
-                                        .font(.callout)
-                                        .foregroundStyle(.gray)
-                                        .padding(.bottom)
-                                }
-                            })
-                        }
-                        .background(colorScheme == .light ? .white : .black)
-                        .zIndex(1)
-                        
-                        ScrollView(.vertical) {
-                            TagLayout(alignment: .center, spacing: 10) {
-                                ForEach(tags.filter { !selectedTags.contains($0)}, id: \.self) { tag in
-                                    TagView(tag, .blue.opacity(0.75), "plus")
-                                        .matchedGeometryEffect(id: tag, in: animationNamespace)
-                                        .onTapGesture {
-                                            withAnimation(.snappy) {
-                                                selectedTags.insert(tag, at: 0)
-                                            }
-                                        }.zIndex(0)
-                                }
-                            }.padding(15)
-                        }
-                        .scrollClipDisabled(true)
-                        .scrollIndicators(.hidden)
-                        .background(colorScheme == .light ? .black.opacity(0.03) : .white.opacity(0.05))
-                        .zIndex(0)
-                        
-                        ZStack {
-                            Button(action: {}, label: {
-                                Text("Continue")
-                                    .fontWeight(.semibold)
-                                    .padding(.vertical, 15)
-                                    .frame(maxWidth: .infinity)
-                                    .foregroundStyle(.white)
-                                    .background {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(.blue)
+                            .background(colorScheme == .light ? .white : .black)
+                            .zIndex(1)
+                            
+                            ScrollView(.vertical) {
+                                TagLayout(alignment: .center, spacing: 10) {
+                                    ForEach(tags.filter { !selectedTags.contains($0)}, id: \.self) { tag in
+                                        TagView(tag, .blue.opacity(0.75), "plus")
+                                            .matchedGeometryEffect(id: tag, in: animationNamespace)
+                                            .onTapGesture {
+                                                let impactMed = UIImpactFeedbackGenerator(style: .soft)
+                                                impactMed.impactOccurred()
+                                                withAnimation(.snappy) {
+                                                    selectedTags.insert(tag, at: 0)
+                                                }
+                                            }.zIndex(0)
                                     }
-                            })
-                            .disabled(selectedTags.count <= 0)
-                            .opacity(selectedTags.count <= 0 ? 0.5 : 1)
-                            .padding()
+                                }.padding(15)
+                            }
+                            .scrollClipDisabled(true)
+                            .scrollIndicators(.hidden)
+                            .background(colorScheme == .light ? .black.opacity(0.03) : .white.opacity(0.05))
+                            .zIndex(0)
+                            
+                            ZStack {
+                                Button(action: {}, label: {
+                                    Text("Continue")
+                                        .fontWeight(.semibold)
+                                        .padding(.vertical, 15)
+                                        .frame(maxWidth: .infinity)
+                                        .foregroundStyle(.white)
+                                        .background {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(.blue)
+                                        }
+                                })
+                                .disabled(selectedTags.count <= 0)
+                                .opacity(selectedTags.count <= 0 ? 0.5 : 1)
+                                .padding()
+                            }
+                            .background(colorScheme == .light ? .white : .black)
+                            .zIndex(2)
+                            
+                        }.background(colorScheme == .light ? .white : .black)
+                    })
+                    Button(action: {
+                        withAnimation(.snappy) {
+                            showSearchbar.toggle()
+                            if showSearchbar {
+                                searchFocused = true
+                            } else {
+                                searchValue = ""
+                                searchImages(searchValue)
+                            }
                         }
-                        .background(colorScheme == .light ? .white : .black)
-                        .zIndex(2)
-                        
-                    }.background(colorScheme == .light ? .white : .black)
-                })
-                Button(action: {}, label: {
-                    Image(systemName: "magnifyingglass")
-                        .font(.title2)
-                        .padding(10)
-                        .background(colorScheme == .dark ? .blue.opacity(0.35) : .blue.opacity(0.12))
-                        .foregroundColor(.blue)
-                        .cornerRadius(8)
-                })
+                    }, label: {
+                        Image(systemName: "magnifyingglass")
+                            .font(.title2)
+                            .padding(10)
+                            .background(colorScheme == .dark ? .blue.opacity(0.35) : .blue.opacity(0.12))
+                            .foregroundColor(.blue)
+                            .cornerRadius(8)
+                    })
+                }
+                .padding()
+                
+                if showSearchbar {
+                    TextField("Search", text: $searchValue)
+                        .padding()
+                        .background(Color.gray.opacity(0.15))
+                        .cornerRadius(10.0)
+                        .padding()
+                        .focused($searchFocused)
+                        .onSubmit {
+                            searchFocused = false
+                        }
+                        .onChange(of: searchValue) {
+                            searchImages(searchValue)
+                        }
+                }
             }
-            .padding()
             
             ScrollView(.vertical, showsIndicators: false, content: {
                 VStack(alignment: .leading, spacing: 15) {
@@ -278,6 +314,8 @@ struct Home: View {
                                         .opacity(filter.id == selectedFilter.id ? 0 : 1)
                                 }
                                 .onTapGesture {
+                                    let impactMed = UIImpactFeedbackGenerator(style: .soft)
+                                    impactMed.impactOccurred()
                                     withAnimation(.spring()) {
                                         selectedFilter = filter
                                         applyFilter()
@@ -347,6 +385,8 @@ struct Home: View {
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         }.padding(.bottom, 10)
                                             .onTapGesture {
+                                                let impactMed = UIImpactFeedbackGenerator(style: .soft)
+                                                impactMed.impactOccurred()
                                                 selectedFish = fish
                                                 showDetails = true
                                             }
@@ -360,6 +400,7 @@ struct Home: View {
                     if(appUser != nil ) {
                         do {
                             fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                            originalFishItems = fishItems
                             applyFilter()
                         } catch {
                             print("Error fetching items")
@@ -417,6 +458,7 @@ struct Home: View {
                                                                     showDetails = false
                                                                     showDeleteConfirm = false
                                                                     fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                                                                    originalFishItems = fishItems
                                                                     applyFilter()
                                                                 } catch {
                                                                     print("Error Deleting item")
@@ -575,6 +617,8 @@ struct Home: View {
                     }
                 }
             })
+        }.onTapGesture {
+            searchFocused = false
         }
     }
     @Namespace private var animationNamespace
@@ -591,6 +635,16 @@ struct Home: View {
             self.fishItems = fishItems.sorted { $0.catch_length > $1.catch_length }
         default:
             break
+        }
+    }
+    
+    private func searchImages(_ value: String) {
+        guard let originalFishItems = originalFishItems else { return }
+        
+        if !value.isEmpty {
+            self.fishItems = originalFishItems.filter { $0.name.localizedCaseInsensitiveContains(value)}
+        } else {
+            self.fishItems = originalFishItems
         }
     }
     
@@ -650,6 +704,7 @@ struct Home: View {
                     showEdit = false
                     showDetails = false
                     fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                    originalFishItems = fishItems
                     applyFilter()
                 } catch {
                     print("Error updating item")
