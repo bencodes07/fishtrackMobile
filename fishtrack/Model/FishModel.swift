@@ -97,6 +97,16 @@ class FishModel: ObservableObject {
         return fish
     }
     
+    func fetchItemsWithTags(userUid: String, tags: [Tag]) async throws -> [Fish] {
+        var fish = try await DatabaseManager.shared.fetchFishItems(for: userUid)
+        fish = fish.filter { fishItem in
+            tags.contains { tag in
+                fishItem.tags.contains(tag.id)
+            }
+        }
+        return fish
+    }
+    
     func editItem(item: FishPayload) async throws {
         try await DatabaseManager.shared.editFishItem(item: item)
     }

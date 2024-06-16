@@ -58,7 +58,7 @@ class DatabaseManager {
         return try await client.from("tags").select().equals("uid", value: uid).order("created_at", ascending: false).execute().value
     }
     
-    func fetchTagById(id: String) async throws -> Tag {
+    func fetchTagById(id: String) async throws -> [Tag] {
         return try await client.from("tags").select().equals("id", value: id).execute().value
     }
 }

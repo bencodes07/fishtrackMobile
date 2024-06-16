@@ -36,10 +36,13 @@ struct Home: View {
     @State private var showTags: Bool = false
     @State private var showTagsAdd: Bool = false
     @State private var tags: [Tag] = []
+    @State var selection = Set<Int>()
+    let items = [1, 4, 6, 8, 9]
     @State private var selectedTags: [Tag] = []
     @State private var newTagName: String = ""
     
     @State private var selectedFish: Fish?
+    @State private var selectedFishTags: [Tag] = []
     @State private var isImagePresented: Bool = false
     
     @State private var showSearchbar: Bool = false
@@ -167,7 +170,7 @@ struct Home: View {
                                 .scrollIndicators(.hidden)
                                 .overlay(content: {
                                     if selectedTags.isEmpty {
-                                        Text("Select at least 1 Tag")
+                                        Text("No tags selected. Showing all catches")
                                             .font(.callout)
                                             .foregroundStyle(.gray)
                                             .padding(.bottom)
@@ -199,19 +202,38 @@ struct Home: View {
                             .zIndex(0)
                             
                             ZStack {
-                                Button(action: {}, label: {
-                                    Text("Continue")
-                                        .fontWeight(.semibold)
-                                        .padding(.vertical, 15)
-                                        .frame(maxWidth: .infinity)
-                                        .foregroundStyle(.white)
-                                        .background {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(.blue)
+                                Button(action: {
+                                    Task {
+                                        if appUser != nil {
+                                            do {
+                                                if selectedTags == [] {
+                                                    fishItems = originalFishItems
+                                                } else {
+                                                    fishItems = try await viewModel.fetchItemsWithTags(userUid: appUser!.uid, tags: selectedTags)
+                                                }
+                                                showTags = false
+                                            } catch {
+                                                print(error)
+                                            }
                                         }
+                                    }
+                                }, label: {
+                                    VStack (spacing: 8) {
+                                        Text("Filter by Tags")
+                                            .fontWeight(.semibold)
+                                            .padding(.vertical, 15)
+                                            .frame(maxWidth: .infinity)
+                                            .foregroundStyle(.white)
+                                            .background {
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(.blue)
+                                            }
+                                        
+                                        Text("A shown fish will contain at least 1 selected tag")
+                                            .font(.footnote)
+                                            .foregroundStyle(.gray)
+                                    }
                                 })
-                                .disabled(selectedTags.count <= 0)
-                                .opacity(selectedTags.count <= 0 ? 0.5 : 1)
                                 .padding()
                             }
                             .background(colorScheme == .light ? .white : .black)
@@ -407,6 +429,7 @@ struct Home: View {
                                                 let impactMed = UIImpactFeedbackGenerator(style: .soft)
                                                 impactMed.impactOccurred()
                                                 selectedFish = fish
+                                                startFetchingTags()
                                                 showDetails = true
                                             }
                                     }
@@ -419,6 +442,7 @@ struct Home: View {
                     if(appUser != nil ) {
                         do {
                             fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                            selectedTags = []
                             originalFishItems = fishItems
                             applyFilter()
                         } catch {
@@ -478,6 +502,7 @@ struct Home: View {
                                                                     showDeleteConfirm = false
                                                                     fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
                                                                     originalFishItems = fishItems
+                                                                    selectedTags = []
                                                                     applyFilter()
                                                                 } catch {
                                                                     print("Error Deleting item")
@@ -533,7 +558,30 @@ struct Home: View {
                             Text("**Location**: View Location").onTapGesture {
                                 showLocation = true
                             }
-                        }.sheet(isPresented: $showLocation, content: {
+                            HStack {
+                                Text("**Tags**:")
+                                VStack {
+                                    List(items, id: \.self, selection: $selection) {
+                                        Text("\($0)")
+                                    }
+                                    .environment(\.editMode, .constant(EditMode.active))
+                                }
+                            }
+                            
+//                            TagLayout(alignment: .leading, spacing: 8) {
+//                                ForEach(selectedFishTags, id: \.self) { tag in
+//                                    TagView(tag.text, .blue, "fish.fill")
+//                                }
+//                                Image(systemName: "plus")
+//                                .frame(height: 35)
+//                                .foregroundStyle(.white)
+//                                .padding(.horizontal, 15)
+//                                .background {
+//                                    Capsule().fill(.blue)
+//                                }
+//                            }
+                            
+                        }.zIndex(1).sheet(isPresented: $showLocation, content: {
                             // Location Viewer
                             if let selectedFish = selectedFish {
                                 let components = selectedFish.catch_location.components(separatedBy: " ")
@@ -551,16 +599,14 @@ struct Home: View {
                             }
                         })
                         .padding()
-                        .frame(maxWidth: getRect().width / 1.1, alignment: .leading)
-                        .background(.black.opacity(0.05))
-                        .cornerRadius(20)
-                        Spacer()
+                        .background(Color.black.opacity(0.05).edgesIgnoringSafeArea(.bottom))
                         .fullScreenCover(isPresented: $isImagePresented) {
                             // Full screen image preview
                             if let selectedFish = selectedFish {
                                 FullScreenImageView(isPresented: $isImagePresented, imageUrl: URL(string: selectedFish.image)!)
                             }
                         }
+                       
                         .sheet(isPresented: $showEdit, content: {
                             VStack(spacing: 12) {
                                 ZStack(alignment: .topLeading) {
@@ -693,6 +739,25 @@ struct Home: View {
             description = selectedFish.description
         }
     }
+    
+    func fetchAndSetTags(for values: [String]) async {
+        for tag in values {
+            do {
+                let fetchedTag: [Tag] = try await DatabaseManager.shared.fetchTagById(id: tag)
+                selectedFishTags.append(fetchedTag.first ?? Tag(text: "Error", id: "", uid: "", created_at: ""))
+            } catch {
+                print("Error fetching tag: \(error)")
+            }
+        }
+    }
+
+    func startFetchingTags() {
+        guard let selTags = selectedFish?.tags else { return }
+        selectedFishTags = []
+        Task {
+            await fetchAndSetTags(for: selTags)
+        }
+    }
         
     private func saveEdits() {
         guard let selectedFish = selectedFish else { return }
@@ -723,6 +788,7 @@ struct Home: View {
                     showEdit = false
                     showDetails = false
                     fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                    selectedTags = []
                     originalFishItems = fishItems
                     applyFilter()
                 } catch {
