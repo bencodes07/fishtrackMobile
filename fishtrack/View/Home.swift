@@ -446,7 +446,7 @@ struct Home: View {
                             originalFishItems = fishItems
                             applyFilter()
                         } catch {
-                            print("Error fetching items")
+                            print("Error fetching items: \(error)")
                         }
                     }
                 }
@@ -775,7 +775,7 @@ struct Home: View {
             catch_weight: weight,
             catch_date: selectedFish.catch_date,
             catch_location: selectedFish.catch_location,
-            image: selectedFish.image,
+            image: selectedFish.image, tags: [],
             user_uid: selectedFish.user_uid,
             uuid: selectedFish.uuid
         )

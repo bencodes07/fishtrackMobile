@@ -9,6 +9,8 @@ import SwiftUI
 import PhotosUI
 import UIKit
 import Combine
+import CoreLocation
+import ImageIO
 import LocationPicker
 
 struct AddFish: View {
@@ -112,7 +114,26 @@ struct AddFish: View {
                                 let photoData = try await item.loadTransferable(type: Data.self)
                                 if let photoData = photoData {
                                     print("Photo data loaded successfully.")
-                                    try await FishModel().createItem(name: name, description: description, catch_type: type, catch_length: length, catch_weight: weight, catch_date: date.ISO8601Format(), catch_location: coordinates.latitude.formatted() + " " + coordinates.longitude.formatted(), uid: appUser!.uid, image: photoData)
+                                    
+                                    // Extract coordinates from metadata
+                                    if let coords = photoData.extractCoordinates() {
+                                        coordinates = coords
+                                        print("Coordinates extracted: \(coordinates.latitude), \(coordinates.longitude)")
+                                    } else {
+                                        print("No location data available in the image metadata.")
+                                    }
+
+                                    try await FishModel().createItem(
+                                        name: name,
+                                        description: description,
+                                        catch_type: type,
+                                        catch_length: length,
+                                        catch_weight: weight,
+                                        catch_date: date.ISO8601Format(),
+                                        catch_location: "\(coordinates.latitude.formatted()) \(coordinates.longitude.formatted())",
+                                        uid: appUser!.uid,
+                                        image: photoData
+                                    )
                                 } else {
                                     print("Failed to load photo data.")
                                 }
@@ -205,5 +226,23 @@ struct NumberInputWithSuffix: View {
         }
         .background(Color.gray.opacity(0.15))
         .cornerRadius(10.0)
+    }
+}
+
+extension Data {
+    func extractCoordinates() -> CLLocationCoordinate2D? {
+        guard let source = CGImageSourceCreateWithData(self as CFData, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              let gps = properties[kCGImagePropertyGPSDictionary] as? [CFString: Any],
+              let latitude = gps[kCGImagePropertyGPSLatitude] as? CLLocationDegrees,
+              let longitude = gps[kCGImagePropertyGPSLongitude] as? CLLocationDegrees,
+              let latitudeRef = gps[kCGImagePropertyGPSLatitudeRef] as? String,
+              let longitudeRef = gps[kCGImagePropertyGPSLongitudeRef] as? String else {
+            return nil
+        }
+
+        let lat = latitudeRef == "S" ? -latitude : latitude
+        let lon = longitudeRef == "W" ? -longitude : longitude
+        return CLLocationCoordinate2D(latitude: lat, longitude: lon)
     }
 }
