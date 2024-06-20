@@ -1,6 +1,6 @@
 # fishtrack
 
-FishTrack is a web application designed for fishing enthusiasts to track and manage their fishing catches. Whether you're an experienced angler or just getting started, FishTrack makes it easy to record your fishing adventures, log your catches, and keep a digital fishing diary. With the ability to upload pictures and add detailed information about each catch, you can use FishTrack to maintain a comprehensive record of your fishing experiences.
+FishTrack is an iOS App designed for fishing enthusiasts to track and manage their fishing catches. Whether you're an experienced angler or just getting started, FishTrack makes it easy to record your fishing adventures, log your catches, and keep a digital fishing diary. With the ability to upload pictures and add detailed information about each catch, you can use FishTrack to maintain a comprehensive record of your fishing experiences.
 
 ## Features
 
