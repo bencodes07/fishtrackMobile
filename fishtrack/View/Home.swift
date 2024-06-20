@@ -554,32 +554,14 @@ struct Home: View {
                             Text("**Type**:  \(selectedFish!.catch_type)")
                             Text("**Length**:  \(selectedFish!.catch_length.formatted(.number.precision(.fractionLength(1)))) cm")
                             Text("**Weight**:  \(selectedFish!.catch_weight.formatted(.number.precision(.fractionLength(1)))) lb")
-                            Text("**Date**:  \(formatDate(selectedFish!.catch_date))")
-                            Text("**Location**: View Location").onTapGesture {
-                                showLocation = true
+                            if (selectedFish!.catch_date != "0001-01-03T00:00:00Z") {
+                                Text("**Date**:  \(formatDate(selectedFish!.catch_date))")
                             }
-                            HStack {
-                                Text("**Tags**:")
-                                VStack {
-                                    List(items, id: \.self, selection: $selection) {
-                                        Text("\($0)")
-                                    }
-                                    .environment(\.editMode, .constant(EditMode.active))
+                            if(selectedFish!.catch_location != "0 0") {
+                                Text("**Location**: View Location").onTapGesture {
+                                    showLocation = true
                                 }
                             }
-                            
-//                            TagLayout(alignment: .leading, spacing: 8) {
-//                                ForEach(selectedFishTags, id: \.self) { tag in
-//                                    TagView(tag.text, .blue, "fish.fill")
-//                                }
-//                                Image(systemName: "plus")
-//                                .frame(height: 35)
-//                                .foregroundStyle(.white)
-//                                .padding(.horizontal, 15)
-//                                .background {
-//                                    Capsule().fill(.blue)
-//                                }
-//                            }
                             
                         }.zIndex(1).sheet(isPresented: $showLocation, content: {
                             // Location Viewer

@@ -73,26 +73,6 @@ struct AddFish: View {
                     NumberInputWithSuffix(text: $length, placeholder: "Fish Length *", suffix: "cm")
                     
                     NumberInputWithSuffix(text: $weight, placeholder: "Fish Weight *", suffix: "lb")
-                    
-                    DatePicker("Select Catch Date", selection: $date, displayedComponents: [.date])
-                        .padding()
-                        .padding(.vertical, -5)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundColor(.gray.opacity(0.6))
-                        .background(.gray.opacity(0.15))
-                        .cornerRadius(10.0)
-                        .datePickerStyle(.compact)
-                    
-                    Button("Select location") {
-                        coordinates.latitude = locationManager.latitude
-                        coordinates.longitude = locationManager.longitude
-                        self.showSheet.toggle()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.gray.opacity(0.15))
-                    .foregroundColor(.gray.opacity(0.6))
-                    .cornerRadius(10)
 
                     TextField("Description", text: $description)
                         .padding()
@@ -116,12 +96,12 @@ struct AddFish: View {
                                     print("Photo data loaded successfully.")
                                     
                                     // Extract coordinates from metadata
-                                    if let coords = photoData.extractCoordinates() {
-                                        coordinates = coords
-                                        print("Coordinates extracted: \(coordinates.latitude), \(coordinates.longitude)")
-                                    } else {
-                                        print("No location data available in the image metadata.")
-                                    }
+                                    coordinates = photoData.extractCoordinates()
+                                    print("Coordinates extracted: \(coordinates.latitude), \(coordinates.longitude)")
+                                    
+                                    // Extract date from metadata
+                                    date = photoData.extractDate()
+                                    print("Date extracted: \(date)")
 
                                     try await FishModel().createItem(
                                         name: name,
@@ -158,8 +138,6 @@ struct AddFish: View {
             }).alert(isPresented: $showAlert) {
                 Alert(title: Text("Validation Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
-        }.sheet(isPresented: $showSheet) {
-            LocationPicker(instructions: "Tap to select coordinates", coordinates: $coordinates, dismissOnSelection: false)
         }
     }
     private func validateFields() -> Bool {
@@ -230,7 +208,7 @@ struct NumberInputWithSuffix: View {
 }
 
 extension Data {
-    func extractCoordinates() -> CLLocationCoordinate2D? {
+    func extractCoordinates() -> CLLocationCoordinate2D {
         guard let source = CGImageSourceCreateWithData(self as CFData, nil),
               let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
               let gps = properties[kCGImagePropertyGPSDictionary] as? [CFString: Any],
@@ -238,11 +216,25 @@ extension Data {
               let longitude = gps[kCGImagePropertyGPSLongitude] as? CLLocationDegrees,
               let latitudeRef = gps[kCGImagePropertyGPSLatitudeRef] as? String,
               let longitudeRef = gps[kCGImagePropertyGPSLongitudeRef] as? String else {
-            return nil
+            return CLLocationCoordinate2D(latitude: 0, longitude: 0)
         }
 
         let lat = latitudeRef == "S" ? -latitude : latitude
         let lon = longitudeRef == "W" ? -longitude : longitude
         return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+    }
+
+    func extractDate() -> Date {
+        guard let source = CGImageSourceCreateWithData(self as CFData, nil),
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any],
+              let dateString = exif[kCGImagePropertyExifDateTimeOriginal] as? String else {
+            return Date(timeIntervalSince1970: -62135596800) // 0000-01-01 00:00:00
+        }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter.date(from: dateString) ?? Date(timeIntervalSince1970: -62135596800) // 0000-01-01 00:00:00
     }
 }
