@@ -1,5 +1,5 @@
 {
-  "originHash" : "4e03fc59f6aeb201e025c34908e8dcb01fcfb5446622a6fb5aaeef5b1fa985fe",
+  "originHash" : "8de5b337144e438cbe48a36b87b6eee592125e636a425d2eed1bfbb0e50816ca",
   "pins" : [
     {
       "identity" : "appauth-ios",
@@ -44,15 +44,6 @@
       "state" : {
         "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
         "version" : "4.2.2"
-      }
-    },
-    {
-      "identity" : "locationpickerforswiftui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/alessiorubicini/LocationPickerForSwiftUI",
-      "state" : {
-        "revision" : "aeb1aea83e887676a6dc369566040748773b418d",
-        "version" : "1.1.2"
       }
     },
     {

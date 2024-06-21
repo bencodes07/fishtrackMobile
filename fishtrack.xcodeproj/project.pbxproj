@@ -16,7 +16,6 @@
 		B367A48B2C0B62D30073F75F /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = B367A48A2C0B62D30073F75F /* Supabase */; };
 		B367A48D2C0B64160073F75F /* SignInApple.swift in Sources */ = {isa = PBXBuildFile; fileRef = B367A48C2C0B64160073F75F /* SignInApple.swift */; };
 		B37A2DBA2C0A42E400E300E0 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37A2DB92C0A42E400E300E0 /* Category.swift */; };
-		B37D40022C10D41700707F6C /* LocationPicker in Frameworks */ = {isa = PBXBuildFile; productRef = B37D40012C10D41700707F6C /* LocationPicker */; };
 		B37D40042C10D5F400707F6C /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D40032C10D5F400707F6C /* LocationManager.swift */; };
 		B3967B3C2C0BA0390034161F /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B3967B3B2C0BA0390034161F /* GoogleSignIn */; };
 		B3967B3E2C0BA0390034161F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B3967B3D2C0BA0390034161F /* GoogleSignInSwift */; };
@@ -98,7 +97,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37D40022C10D41700707F6C /* LocationPicker in Frameworks */,
 				B367A4852C0B62D30073F75F /* PostgREST in Frameworks */,
 				B367A4832C0B62D30073F75F /* Functions in Frameworks */,
 				B367A48B2C0B62D30073F75F /* Supabase in Frameworks */,
@@ -284,7 +282,6 @@
 				B367A48A2C0B62D30073F75F /* Supabase */,
 				B3967B3B2C0BA0390034161F /* GoogleSignIn */,
 				B3967B3D2C0BA0390034161F /* GoogleSignInSwift */,
-				B37D40012C10D41700707F6C /* LocationPicker */,
 			);
 			productName = fishtrack;
 			productReference = B3D07B8E2C0A24E1007B3B89 /* fishtrack.app */;
@@ -361,7 +358,6 @@
 			packageReferences = (
 				B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				B3967B3A2C0BA0390034161F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
-				B37D40002C10D3D100707F6C /* XCRemoteSwiftPackageReference "LocationPickerForSwiftUI" */,
 			);
 			productRefGroup = B3D07B8F2C0A24E1007B3B89 /* Products */;
 			projectDirPath = "";
@@ -776,14 +772,6 @@
 				minimumVersion = 2.5.1;
 			};
 		};
-		B37D40002C10D3D100707F6C /* XCRemoteSwiftPackageReference "LocationPickerForSwiftUI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/alessiorubicini/LocationPickerForSwiftUI";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.2;
-			};
-		};
 		B3967B3A2C0BA0390034161F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -824,11 +812,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B367A47C2C0B60290073F75F /* XCRemoteSwiftPackageReference "supabase-swift" */;
 			productName = Supabase;
-		};
-		B37D40012C10D41700707F6C /* LocationPicker */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B37D40002C10D3D100707F6C /* XCRemoteSwiftPackageReference "LocationPickerForSwiftUI" */;
-			productName = LocationPicker;
 		};
 		B3967B3B2C0BA0390034161F /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
