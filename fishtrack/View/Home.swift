@@ -10,7 +10,13 @@ import LocationPicker
 import CoreLocation
 import PhotosUI
 import UIKit
+import MapKit
 import Combine
+
+struct IdentifiableCoordinate: Identifiable {
+    let id = UUID()
+    let coordinate: CLLocationCoordinate2D
+}
 
 struct Home: View {
     @State var selectedFilter: Category = categories.first!
@@ -58,6 +64,12 @@ struct Home: View {
     @State private var location: String = ""
     
     @State private var locationCoordinates: CLLocationCoordinate2D?
+    @State var region = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 0, longitude: 0),
+            span: MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003)
+        )
+        @State var markerCoordinate = IdentifiableCoordinate(coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0))
+
     
     @ViewBuilder
     func TagView(_ tag: String, _ color: Color, _ icon: String) -> some View {
@@ -549,37 +561,27 @@ struct Home: View {
                             }
                         }.cornerRadius(20)
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("**Name**:  \(selectedFish!.name)")
-                            Text("**Description**:  \(selectedFish!.description)")
-                            Text("**Type**:  \(selectedFish!.catch_type)")
-                            Text("**Length**:  \(selectedFish!.catch_length.formatted(.number.precision(.fractionLength(1)))) cm")
-                            Text("**Weight**:  \(selectedFish!.catch_weight.formatted(.number.precision(.fractionLength(1)))) lb")
-                            if (selectedFish!.catch_date != "0001-01-03T00:00:00Z") {
-                                Text("**Date**:  \(formatDate(selectedFish!.catch_date))")
+                            FishDetails(fish: selectedFish)
+                            if let catchLocation = selectedFish?.catch_location, catchLocation != "0 0" {
+                                LocationView(location: catchLocation, region: $region, markerCoordinate: $markerCoordinate, showLocation: $showLocation)
                             }
-                            if(selectedFish!.catch_location != "0 0") {
-                                Text("**Location**: View Location").onTapGesture {
-                                    showLocation = true
-                                }
+                        }
+                        .zIndex(1)
+                        .sheet(isPresented: $showLocation) {
+                            HStack {
+                                Button(action: { showLocation = false }, label: {
+                                    Image(systemName: "chevron.backward")
+                                        .padding()
+                                        .clipShape(Circle())
+                                })
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Spacer()
                             }
-                            
-                        }.zIndex(1).sheet(isPresented: $showLocation, content: {
-                            // Location Viewer
-                            if let selectedFish = selectedFish {
-                                let components = selectedFish.catch_location.components(separatedBy: " ")
-                                if components.count == 2, let latitude = Double(components[0].replacingOccurrences(of: ",", with: ".")),
-                                   let longitude = Double(components[1].replacingOccurrences(of: ",", with: ".")) {
-                                    let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                                    let constantBinding = Binding<CLLocationCoordinate2D>(
-                                        get: { coordinates },
-                                        set: { _ in }
-                                    )
-                                    LocationPicker(instructions: "View your catch Location", coordinates: constantBinding, dismissOnSelection: true)
-                                } else {
-                                    Text("Invalid location data")
-                                }
-                            }
-                        })
+                            .padding(.top)
+                            .padding(.leading)
+                            MapView(region: $region, markerCoordinate: markerCoordinate)
+                        }
                         .padding()
                         .background(Color.black.opacity(0.05).edgesIgnoringSafeArea(.bottom))
                         .fullScreenCover(isPresented: $isImagePresented) {
@@ -693,23 +695,6 @@ struct Home: View {
         } else {
             self.fishItems = originalFishItems
         }
-    }
-    
-    private func formatDate(_ dateStr: String) -> String {
-        let isoDateFormatter = ISO8601DateFormatter()
-        isoDateFormatter.formatOptions = [.withInternetDateTime]
-        
-        guard let date = isoDateFormatter.date(from: dateStr) else {
-            return "Invalid date"
-        }
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy | HH:mm"
-        dateFormatter.timeZone = TimeZone.current
-        
-        let formattedDate = dateFormatter.string(from: date)
-        
-        return formattedDate
     }
     
     private func setEditSheetValues() {
@@ -879,5 +864,76 @@ struct PinchToZoom: ViewModifier {
                     self.lastScale = 1.0
                 }
             )
+    }
+}
+
+struct LocationView: View {
+    let location: String
+    @Binding var region: MKCoordinateRegion
+    @Binding var markerCoordinate: IdentifiableCoordinate
+    @Binding var showLocation: Bool
+    
+    var body: some View {
+        Text("**Location**: View Location")
+            .onTapGesture {
+                handleLocationTap(location: location)
+            }
+    }
+    
+    private func handleLocationTap(location: String) {
+        let components = location.components(separatedBy: " ")
+        if components.count == 2,
+           let latitude = Double(components[0].replacingOccurrences(of: ",", with: ".")),
+           let longitude = Double(components[1].replacingOccurrences(of: ",", with: ".")) {
+            let coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            region.center = coordinates
+            markerCoordinate = IdentifiableCoordinate(coordinate: coordinates)
+            showLocation = true
+        }
+    }
+}
+
+struct MapView: View {
+    @Binding var region: MKCoordinateRegion
+    let markerCoordinate: IdentifiableCoordinate
+
+    var body: some View {
+        Map(coordinateRegion: $region, annotationItems: [markerCoordinate]) { location in
+            MapMarker(coordinate: location.coordinate)
+        }
+    }
+}
+
+struct FishDetails: View {
+    let fish: Fish?
+
+    var body: some View {
+        Group {
+            Text("**Name**: \(fish?.name ?? "")")
+            Text("**Description**: \(fish?.description ?? "")")
+            Text("**Type**: \(fish?.catch_type ?? "")")
+            Text("**Length**: \(fish?.catch_length.formatted(.number.precision(.fractionLength(1))) ?? "") cm")
+            Text("**Weight**: \(fish?.catch_weight.formatted(.number.precision(.fractionLength(1))) ?? "") lb")
+            if let catchDate = fish?.catch_date, catchDate != "0001-01-03T00:00:00Z" {
+                Text("**Date**: \(formatDate(catchDate))")
+            }
+        }
+    }
+    
+    private func formatDate(_ dateStr: String) -> String {
+        let isoDateFormatter = ISO8601DateFormatter()
+        isoDateFormatter.formatOptions = [.withInternetDateTime]
+        
+        guard let date = isoDateFormatter.date(from: dateStr) else {
+            return "Invalid date"
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy | HH:mm"
+        dateFormatter.timeZone = TimeZone.current
+        
+        let formattedDate = dateFormatter.string(from: date)
+        
+        return formattedDate
     }
 }
