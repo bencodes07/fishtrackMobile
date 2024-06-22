@@ -1,10 +1,3 @@
-//
-//  DatabaseManager.swift
-//  fishtrack
-//
-//  Created by Ben Böckmann on 03.06.24.
-//
-
 import Foundation
 import Supabase
 
@@ -13,7 +6,7 @@ struct TagPayload: Codable {
     let uid: String
 }
 
-struct Tag: Decodable, Identifiable, Hashable {
+struct Tag: Decodable, Identifiable, Hashable, Encodable {
     let text: String
     let id: String
     let uid: String
@@ -49,7 +42,6 @@ class DatabaseManager {
         return fish
     }
     
-    
     func createTag(item: TagPayload) async throws {
         try await client.from("tags").insert(item).execute()
     }
@@ -80,7 +72,26 @@ class DatabaseManager {
         print(result)
         return result
     }
+    
+    func addTagToFish(fishId: String, tagId: String) async throws -> [Tag] {
+        let tags = try await fetchTagsForFish(for: fishId)
+        var tagIds: [String] = []
+        
+        for tag in tags {
+            if(!tagIds.contains(tag.id)) {
+                tagIds.append(tag.id)
+            }
+        }
+        if(!tagIds.contains(tagId)) {
+            tagIds.append(tagId)
+        }
+        
+        // Update the fish item with the new list of tag IDs
+        try await client.from("fish").update(["tags": tagIds]).eq("uuid", value: fishId).execute()
+        return try await fetchTagsForFish(for: fishId)
+    }
 }
+
 struct FishItemWithTags: Decodable {
     let tags: [String]
 }

@@ -17,7 +17,7 @@ struct Fish: Decodable, Identifiable {
     let catch_date: String
     let catch_location: String
     let image: String
-    let tags: [String]?
+    let tags: [String]
     
     let user_uid: String
     let uuid: String
@@ -35,7 +35,7 @@ struct FishPayload: Codable {
     let catch_date: String
     let catch_location: String
     let image: String?
-    let tags: [String]?
+    let tags: [String]
     
     let user_uid: String
     let uuid: String
@@ -69,7 +69,7 @@ class FishModel: ObservableObject {
                             catch_date: catch_date,
                             catch_location: catch_location,
                             image: nil,
-                            tags: [],
+                            tags: [""],
                             user_uid: uid,
                             uuid: uuid
                         )
@@ -105,5 +105,9 @@ class FishModel: ObservableObject {
     
     func editItem(item: FishPayload) async throws {
         try await DatabaseManager.shared.editFishItem(item: item)
+    }
+    
+    func addTagToFish(fishId: String, tagId: String) async throws -> [Tag] {
+        return try await DatabaseManager.shared.addTagToFish(fishId: fishId, tagId: tagId)
     }
 }

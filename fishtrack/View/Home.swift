@@ -41,6 +41,7 @@ struct Home: View {
     
     @State private var showTags: Bool = false
     @State private var showTagsAdd: Bool = false
+    @State private var showTagPopover: Bool = false
     @State private var tags: [Tag] = []
     @State var selection = Set<Int>()
     let items = [1, 4, 6, 8, 9]
@@ -221,7 +222,8 @@ struct Home: View {
                                                 if selectedTags == [] {
                                                     fishItems = originalFishItems
                                                 } else {
-                                                    fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                                                    let allFishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
+                                                    fishItems = filterFishItems(allFishItems, withTags: selectedTags)
                                                 }
                                                 showTags = false
                                             } catch {
@@ -441,6 +443,7 @@ struct Home: View {
                                                 let impactMed = UIImpactFeedbackGenerator(style: .soft)
                                                 impactMed.impactOccurred()
                                                 selectedFish = fish
+                                                selectedFishTags = []
                                                 Task {
                                                     if(selectedFish != nil ) {
                                                         do {
@@ -585,12 +588,45 @@ struct Home: View {
                                     .background(.blue)
                                     .cornerRadius(20)
                                 }
-                                Button(action: {}, label: {
+                                Button(action: { showTagPopover = true }, label: {
                                     Image(systemName: "plus")
                                         .frame(width: 35, height: 35)
                                         .foregroundStyle(.white)
                                         .background(.blue)
                                         .cornerRadius(20)
+                                }).popover(isPresented: $showTagPopover, attachmentAnchor: .point(.center),
+                                           arrowEdge: .top,content: {
+                                    VStack(alignment: .leading) {
+                                        Text("Select a Tag")
+                                            .font(.title3)
+                                            .padding(.horizontal)
+
+                                        Divider()
+
+                                        ScrollView {
+                                            TagLayout() {
+                                                ForEach(tags) { tag in
+                                                    Button(action: {
+                                                        Task {
+                                                            if (selectedFish != nil) {
+                                                                do {
+                                                                    let response: [Tag] = try await viewModel.addTagToFish(fishId: selectedFish!.uuid, tagId: tag.id)
+                                                                    selectedFishTags = response
+                                                                    showTagPopover = false
+                                                                } catch {
+                                                                    print("Error adding tag to fish: \(error)")
+                                                                }
+                                                            }
+                                                        }
+                                                    }, label: {
+                                                        TagView(tag.text, .blue, "plus")
+                                                    })
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .padding()
+                                    .presentationCompactAdaptation(.none)
                                 })
                             }
                             Spacer()
@@ -733,6 +769,13 @@ struct Home: View {
             length = String(selectedFish.catch_length)
             weight = String(selectedFish.catch_weight)
             description = selectedFish.description
+        }
+    }
+    
+    private func filterFishItems(_ items: [Fish], withTags selectedTags: [Tag]) -> [Fish] {
+        let selectedTagIds = selectedTags.map { $0.id }
+        return items.filter { fish in
+            !selectedTags.isEmpty && fish.tags.contains(where: selectedTagIds.contains)
         }
     }
         
