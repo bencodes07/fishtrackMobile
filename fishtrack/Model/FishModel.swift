@@ -99,14 +99,8 @@ class FishModel: ObservableObject {
         return fish
     }
     
-    func fetchItemsWithTags(userUid: String, tags: [Tag]) async throws -> [Fish] {
-        var fish = try await DatabaseManager.shared.fetchFishItems(for: userUid)
-//        fish = fish.filter { fishItem in
-//            tags.contains { tag in
-//                fishItem.tags?.contains(tag.id)!
-//            }
-//        }
-        return fish
+    func fetchTagsForFish(for uuid: String) async throws -> [Tag] {
+        return try await DatabaseManager.shared.fetchTagsForFish(for: uuid)
     }
     
     func editItem(item: FishPayload) async throws {

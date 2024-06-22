@@ -61,4 +61,26 @@ class DatabaseManager {
     func fetchTagById(id: String) async throws -> [Tag] {
         return try await client.from("tags").select().equals("id", value: id).execute().value
     }
+    
+    func fetchTagsForFish(for uuid: String) async throws -> [Tag] {
+        // Fetch the fish item by uuid to get the tags field
+        let fishItem: [FishItemWithTags] = try await client.from("fish").select("tags").eq("uuid", value: uuid).execute().value
+
+        // Ensure there's at least one fish item and get its tags
+        guard let tagsField = fishItem.first?.tags else {
+            return []
+        }
+
+        var result: [Tag] = []
+        for tagId in tagsField {
+            if let tag = try await fetchTagById(id: tagId).first {
+                result.append(tag)
+            }
+        }
+        print(result)
+        return result
+    }
+}
+struct FishItemWithTags: Decodable {
+    let tags: [String]
 }

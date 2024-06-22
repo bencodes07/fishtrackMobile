@@ -221,7 +221,7 @@ struct Home: View {
                                                 if selectedTags == [] {
                                                     fishItems = originalFishItems
                                                 } else {
-                                                    fishItems = try await viewModel.fetchItemsWithTags(userUid: appUser!.uid, tags: selectedTags)
+                                                    fishItems = try await viewModel.fetchItems(userUid: appUser!.uid)
                                                 }
                                                 showTags = false
                                             } catch {
@@ -441,7 +441,15 @@ struct Home: View {
                                                 let impactMed = UIImpactFeedbackGenerator(style: .soft)
                                                 impactMed.impactOccurred()
                                                 selectedFish = fish
-                                                startFetchingTags()
+                                                Task {
+                                                    if(selectedFish != nil ) {
+                                                        do {
+                                                            selectedFishTags = try await viewModel.fetchTagsForFish(for: selectedFish!.uuid)
+                                                        } catch {
+                                                            print("Error Fetching Tags: \(error)")
+                                                        }
+                                                    }
+                                                }
                                                 showDetails = true
                                             }
                                     }
@@ -565,6 +573,27 @@ struct Home: View {
                             if let catchLocation = selectedFish?.catch_location, catchLocation != "0 0" {
                                 LocationView(location: catchLocation, region: $region, markerCoordinate: $markerCoordinate, showLocation: $showLocation)
                             }
+                            Text("**Tags**: ").frame(maxWidth: .infinity, alignment: .leading)
+                            TagLayout(alignment: .leading) {
+                                ForEach(selectedFishTags, id: \.self) { tag in
+                                    Text(tag.text)
+                                    .font(.callout)
+                                    .fontWeight(.semibold)
+                                    .frame(height: 35)
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 15)
+                                    .background(.blue)
+                                    .cornerRadius(20)
+                                }
+                                Button(action: {}, label: {
+                                    Image(systemName: "plus")
+                                        .frame(width: 35, height: 35)
+                                        .foregroundStyle(.white)
+                                        .background(.blue)
+                                        .cornerRadius(20)
+                                })
+                            }
+                            Spacer()
                         }
                         .zIndex(1)
                         .sheet(isPresented: $showLocation) {
@@ -704,25 +733,6 @@ struct Home: View {
             length = String(selectedFish.catch_length)
             weight = String(selectedFish.catch_weight)
             description = selectedFish.description
-        }
-    }
-    
-    func fetchAndSetTags(for values: [String]) async {
-        for tag in values {
-            do {
-                let fetchedTag: [Tag] = try await DatabaseManager.shared.fetchTagById(id: tag)
-                selectedFishTags.append(fetchedTag.first ?? Tag(text: "Error", id: "", uid: "", created_at: ""))
-            } catch {
-                print("Error fetching tag: \(error)")
-            }
-        }
-    }
-
-    func startFetchingTags() {
-        guard let selTags = selectedFish?.tags else { return }
-        selectedFishTags = []
-        Task {
-            await fetchAndSetTags(for: selTags)
         }
     }
         
