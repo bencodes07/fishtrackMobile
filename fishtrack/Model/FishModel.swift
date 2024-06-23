@@ -114,4 +114,8 @@ class FishModel: ObservableObject {
     func removeTagFromFish(fishId: String, tagId: String) async throws -> [Tag] {
         return try await DatabaseManager.shared.removeTagFromFish(fishId: fishId, tagId: tagId)
     }
+    
+    func deleteTag(tagId: String, uid: String) async throws -> [Tag] {
+        return try await DatabaseManager.shared.deleteTag(tagId: tagId, uid: uid)
+    }
 }

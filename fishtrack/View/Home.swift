@@ -146,7 +146,7 @@ struct Home: View {
                                                             do {
                                                                 try await DatabaseManager.shared.createTag(item: TagPayload(text: newTagName, uid: appUser!.uid))
                                                             } catch {
-                                                                print(error)
+                                                                print("Error creating tag: \(error)")
                                                             }
                                                         }
                                                     }
@@ -204,7 +204,23 @@ struct Home: View {
                                                 withAnimation(.snappy) {
                                                     selectedTags.insert(tag, at: 0)
                                                 }
-                                            }.zIndex(0)
+                                            }
+                                            .zIndex(0)
+                                            .contextMenu {
+                                                Button(role: .destructive) {
+                                                    Task {
+                                                        if(appUser != nil) {
+                                                            do {
+                                                                tags = try await viewModel.deleteTag(tagId: tag.id, uid: appUser!.uid)
+                                                            } catch {
+                                                                print("Error deleting tag: \(error)")
+                                                            }
+                                                        }
+                                                    }
+                                                } label: {
+                                                    Label("Delete Tag", systemImage: "trash")
+                                                }
+                                            }
                                     }
                                 }
                                 .padding(15)
