@@ -90,6 +90,22 @@ class DatabaseManager {
         try await client.from("fish").update(["tags": tagIds]).eq("uuid", value: fishId).execute()
         return try await fetchTagsForFish(for: fishId)
     }
+    
+    func removeTagFromFish(fishId: String, tagId: String) async throws -> [Tag] {
+        let tags = try await fetchTagsForFish(for: fishId)
+        var tagIds: [String] = []
+        
+        for tag in tags {
+            if(!tagIds.contains(tag.id)) {
+                tagIds.append(tag.id)
+            }
+        }
+        let newTagIds = tagIds.filter { $0 != tagId }
+        
+        // Update the fish item with the new list of tag IDs
+        try await client.from("fish").update(["tags": newTagIds]).eq("uuid", value: fishId).execute()
+        return try await fetchTagsForFish(for: fishId)
+    }
 }
 
 struct FishItemWithTags: Decodable {

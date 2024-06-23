@@ -579,9 +579,23 @@ struct Home: View {
                             Text("**Tags**: ").frame(maxWidth: .infinity, alignment: .leading)
                             TagLayout(alignment: .leading) {
                                 ForEach(selectedFishTags, id: \.self) { tag in
-                                    Text(tag.text)
-                                    .font(.callout)
-                                    .fontWeight(.semibold)
+                                    HStack (spacing: 10) {
+                                        Text(tag.text)
+                                            .font(.callout)
+                                            .fontWeight(.semibold)
+                                        
+                                        Button(action: {
+                                            Task {
+                                                do {
+                                                    selectedFishTags = try await viewModel.removeTagFromFish(fishId: selectedFish!.uuid, tagId: tag.id)
+                                                } catch {
+                                                    print("Error removing tag from fish: \(error)")
+                                                }
+                                            }
+                                        }, label: {
+                                            Image(systemName: "minus.circle")
+                                        })
+                                    }
                                     .frame(height: 35)
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 15)
