@@ -565,29 +565,74 @@ struct Home: View {
                             switch phase {
                             case .empty:
                                 ProgressView()
-                                    .frame(maxWidth: getRect().width / 1.1, maxHeight: getRect().width / 1.1 * 0.8)
-                                    .cornerRadius(20)
+                                    .frame(maxWidth: .infinity)
                             case .success(let image):
                                 image.resizable()
                                     .scaledToFit()
-                                    .frame(maxWidth: getRect().width / 1.1, maxHeight: getRect().width / 1.1)
-                                    .clipped()
+                                    .frame(height: getRect().height / 2.8)
                                     .onTapGesture {
                                         isImagePresented = true
                                     }
-                                    .cornerRadius(20)
                             case .failure:
                                 Image(systemName: "photo")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(maxWidth: getRect().width / 1.1, maxHeight: getRect().width / 1.1)
+                                    .frame(maxWidth: .infinity)
                                     .clipped()
-                                    .cornerRadius(20)
                             @unknown default:
-                                EmptyView().frame(maxWidth: getRect().width / 1.2, maxHeight: getRect().width / 1.2 * 0.8)
+                                EmptyView().frame(maxWidth: .infinity)
                             }
-                        }.cornerRadius(20)
+                        }.overlay (alignment: .bottomLeading, content: {
+                            Text(selectedFish!.name)
+                                .font(.title)
+                                .foregroundStyle(.thickMaterial)
+                                .fontWeight(.bold)
+                                .padding()
+                        })
                         VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                VStack {
+                                    Image(systemName: "ruler")
+                                    Text("132")
+                                }
+                                .frame(width: 40, height: 40)
+                                .padding()
+                                .background(.black.opacity(0.1))
+                                .cornerRadius(10)
+                                
+                                Spacer()
+                                
+                                VStack {
+                                    Image(systemName: "scalemass")
+                                    Text("60")
+                                }
+                                .frame(width: 40, height: 40)
+                                .padding()
+                                .background(.black.opacity(0.1))
+                                .cornerRadius(10)
+                                
+                                Spacer()
+                                
+                                VStack {
+                                    Image(systemName: "ruler")
+                                    Text("60")
+                                }
+                                .frame(width: 40, height: 40)
+                                .padding()
+                                .background(.black.opacity(0.1))
+                                .cornerRadius(10)
+                                
+                                Spacer()
+                                
+                                VStack {
+                                    Image(systemName: "ruler")
+                                    Text("60")
+                                }
+                                .frame(width: 40, height: 40)
+                                .padding()
+                                .background(.black.opacity(0.1))
+                                .cornerRadius(10)
+                            }.frame(maxWidth: .infinity, alignment: .center)
                             FishDetails(fish: selectedFish)
                             if let catchLocation = selectedFish?.catch_location, catchLocation != "0 0" {
                                 LocationView(location: catchLocation, region: $region, markerCoordinate: $markerCoordinate, showLocation: $showLocation)
@@ -659,7 +704,6 @@ struct Home: View {
                                     .presentationCompactAdaptation(.none)
                                 })
                             }
-                            Spacer()
                         }
                         .zIndex(1)
                         .sheet(isPresented: $showLocation) {
