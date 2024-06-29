@@ -492,8 +492,8 @@ struct Home: View {
             }
             .sheet(isPresented: $showDetails, content: {
                 if selectedFish != nil {
-                    VStack(spacing: 12) {
-                        ZStack(alignment: .topLeading) {
+                    VStack {
+                        ZStack(alignment: .center) {
                             HStack {
                                 Button(action: {
                                     showDetails = false
@@ -560,7 +560,7 @@ struct Home: View {
                                     .padding(.trailing)
                                 }
                             }
-                        }
+                        }.padding(.top, 10)
                         AsyncImage(url: URL(string: selectedFish!.image)) { phase in
                             switch phase {
                             case .empty:
@@ -569,10 +569,18 @@ struct Home: View {
                             case .success(let image):
                                 image.resizable()
                                     .scaledToFit()
-                                    .frame(height: getRect().height / 2.8)
+                                    .overlay(
+                                        Text(selectedFish!.name)
+                                            .font(.title)
+                                            .foregroundStyle(.thickMaterial)
+                                            .fontWeight(.bold)
+                                            .padding(),
+                                        alignment: .bottomLeading
+                                    )
                                     .onTapGesture {
                                         isImagePresented = true
                                     }
+                                    .frame(minHeight: getRect().height / 2.8)
                             case .failure:
                                 Image(systemName: "photo")
                                     .resizable()
@@ -582,60 +590,15 @@ struct Home: View {
                             @unknown default:
                                 EmptyView().frame(maxWidth: .infinity)
                             }
-                        }.overlay (alignment: .bottomLeading, content: {
-                            Text(selectedFish!.name)
-                                .font(.title)
-                                .foregroundStyle(.thickMaterial)
-                                .fontWeight(.bold)
-                                .padding()
-                        })
+                        }
+
                         VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                VStack {
-                                    Image(systemName: "ruler")
-                                    Text("132")
-                                }
-                                .frame(width: 40, height: 40)
-                                .padding()
-                                .background(.black.opacity(0.1))
-                                .cornerRadius(10)
-                                
-                                Spacer()
-                                
-                                VStack {
-                                    Image(systemName: "scalemass")
-                                    Text("60")
-                                }
-                                .frame(width: 40, height: 40)
-                                .padding()
-                                .background(.black.opacity(0.1))
-                                .cornerRadius(10)
-                                
-                                Spacer()
-                                
-                                VStack {
-                                    Image(systemName: "ruler")
-                                    Text("60")
-                                }
-                                .frame(width: 40, height: 40)
-                                .padding()
-                                .background(.black.opacity(0.1))
-                                .cornerRadius(10)
-                                
-                                Spacer()
-                                
-                                VStack {
-                                    Image(systemName: "ruler")
-                                    Text("60")
-                                }
-                                .frame(width: 40, height: 40)
-                                .padding()
-                                .background(.black.opacity(0.1))
-                                .cornerRadius(10)
-                            }.frame(maxWidth: .infinity, alignment: .center)
                             FishDetails(fish: selectedFish)
                             if let catchLocation = selectedFish?.catch_location, catchLocation != "0 0" {
                                 LocationView(location: catchLocation, region: $region, markerCoordinate: $markerCoordinate, showLocation: $showLocation)
+                            }
+                            if let description = selectedFish?.description, description != "" {
+                                Text("**Description** \(description)")
                             }
                             Text("**Tags**: ").frame(maxWidth: .infinity, alignment: .leading)
                             TagLayout(alignment: .leading) {
@@ -704,6 +667,7 @@ struct Home: View {
                                     .presentationCompactAdaptation(.none)
                                 })
                             }
+                            Spacer()
                         }
                         .zIndex(1)
                         .sheet(isPresented: $showLocation) {
@@ -1033,18 +997,58 @@ struct MapView: View {
 
 struct FishDetails: View {
     let fish: Fish?
+    @State private var showTypePopover: Bool = false
 
     var body: some View {
-        Group {
-            Text("**Name**: \(fish?.name ?? "")")
-            Text("**Description**: \(fish?.description ?? "")")
-            Text("**Type**: \(fish?.catch_type ?? "")")
-            Text("**Length**: \(fish?.catch_length.formatted(.number.precision(.fractionLength(1))) ?? "") cm")
-            Text("**Weight**: \(fish?.catch_weight.formatted(.number.precision(.fractionLength(1))) ?? "") lb")
-            if let catchDate = fish?.catch_date, catchDate != "0001-01-03T00:00:00Z" {
-                Text("**Date**: \(formatDate(catchDate))")
+        HStack {
+            VStack (spacing: 4) {
+                Image(systemName: "ruler.fill")
+                Text("\(fish?.catch_length.formatted(.number.precision(.fractionLength(1))) ?? "") cm").lineLimit(1)
+            }.foregroundStyle(.blue)
+            .clipShape(.rect)
+            .padding()
+            .frame(maxWidth: getRect().width / 3.7, minHeight: 70)
+            .background(.black.opacity(0.1))
+            .cornerRadius(10)
+            
+            Spacer()
+            
+            VStack (spacing: 4) {
+                Image(systemName: "scalemass.fill")
+                Text("\(fish?.catch_weight.formatted(.number.precision(.fractionLength(1))) ?? "") lb").lineLimit(1)
+            }.foregroundStyle(.blue)
+            .clipShape(.rect)
+            .padding()
+            .frame(maxWidth: getRect().width / 3.7, minHeight: 70)
+            .background(.black.opacity(0.1))
+            .cornerRadius(10)
+            
+            Spacer()
+            
+            VStack (spacing: 4) {
+                Image(systemName: "fish.fill")
+                Text(fish?.catch_type ?? "Error").lineLimit(1)
+            }.foregroundStyle(.blue)
+            .popover(isPresented: $showTypePopover) {
+                VStack {
+                    Text(fish?.catch_type ?? "Error!").font(.title2)
+                        .padding()
+                }.presentationCompactAdaptation(.none).padding()
             }
-        }
+            .clipShape(.rect)
+            .padding()
+            .frame(maxWidth: getRect().width / 3.7, minHeight: 70)
+            .onTapGesture {
+                showTypePopover = true
+            }
+            .background(.black.opacity(0.1))
+            .cornerRadius(10)
+        }.frame(maxWidth: .infinity, alignment: .center)
+//        Group {
+//            if let catchDate = fish?.catch_date, catchDate != "0001-01-03T00:00:00Z" {
+//                Text("**Date**: \(formatDate(catchDate))")
+//            }
+//        }
     }
     
     private func formatDate(_ dateStr: String) -> String {
