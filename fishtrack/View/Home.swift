@@ -295,7 +295,7 @@ struct Home: View {
                         Image(systemName: "magnifyingglass")
                             .font(.title2)
                             .padding(10)
-                            .background(colorScheme == .dark ? .blue.opacity(0.35) : .blue.opacity(0.12))
+                            .background(showSearchbar ? (colorScheme == .dark ? .blue.opacity(0.35) : .blue.opacity(0.12)) : .clear)
                             .foregroundColor(.blue)
                             .cornerRadius(8)
                     })
