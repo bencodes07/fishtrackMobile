@@ -598,7 +598,7 @@ struct Home: View {
                                 LocationView(location: catchLocation, region: $region, markerCoordinate: $markerCoordinate, showLocation: $showLocation)
                             }
                             if let description = selectedFish?.description, description != "" {
-                                Text("**Description** \(description)")
+                                Text("**Description:** \(description)")
                             }
                             Text("**Tags**: ").frame(maxWidth: .infinity, alignment: .leading)
                             TagLayout(alignment: .leading) {
@@ -965,10 +965,11 @@ struct LocationView: View {
     @Binding var showLocation: Bool
     
     var body: some View {
-        Text("**Location**: View Location")
-            .onTapGesture {
-                handleLocationTap(location: location)
-            }
+        Button(action: {
+            handleLocationTap(location: location)
+        }, label: {
+            Text("View Catch Location").foregroundStyle(.blue)
+        }).frame(maxWidth: .infinity, maxHeight: 50, alignment: .center).background(.black.opacity(0.1)).cornerRadius(10)
     }
     
     private func handleLocationTap(location: String) {
@@ -998,6 +999,8 @@ struct MapView: View {
 struct FishDetails: View {
     let fish: Fish?
     @State private var showTypePopover: Bool = false
+    @State private var showLengthPopover: Bool = false
+    @State private var showWeightPopover: Bool = false
 
     var body: some View {
         HStack {
@@ -1005,7 +1008,16 @@ struct FishDetails: View {
                 Image(systemName: "ruler.fill")
                 Text("\(fish?.catch_length.formatted(.number.precision(.fractionLength(1))) ?? "") cm").lineLimit(1)
             }.foregroundStyle(.blue)
+            .popover(isPresented: $showLengthPopover) {
+                VStack {
+                    Text("\(fish?.catch_length.formatted(.number.precision(.fractionLength(1))) ?? "Error!") cm").font(.title2)
+                        .padding()
+                }.presentationCompactAdaptation(.none).padding()
+            }
             .clipShape(.rect)
+            .onTapGesture {
+                showLengthPopover = true
+            }
             .padding()
             .frame(maxWidth: getRect().width / 3.7, minHeight: 70)
             .background(.black.opacity(0.1))
@@ -1017,7 +1029,16 @@ struct FishDetails: View {
                 Image(systemName: "scalemass.fill")
                 Text("\(fish?.catch_weight.formatted(.number.precision(.fractionLength(1))) ?? "") lb").lineLimit(1)
             }.foregroundStyle(.blue)
+            .popover(isPresented: $showWeightPopover) {
+                VStack {
+                    Text("\(fish?.catch_weight.formatted(.number.precision(.fractionLength(1))) ?? "Error!") lb").font(.title2)
+                        .padding()
+                }.presentationCompactAdaptation(.none).padding()
+            }
             .clipShape(.rect)
+            .onTapGesture {
+                showWeightPopover = true
+            }
             .padding()
             .frame(maxWidth: getRect().width / 3.7, minHeight: 70)
             .background(.black.opacity(0.1))
@@ -1044,11 +1065,6 @@ struct FishDetails: View {
             .background(.black.opacity(0.1))
             .cornerRadius(10)
         }.frame(maxWidth: .infinity, alignment: .center)
-//        Group {
-//            if let catchDate = fish?.catch_date, catchDate != "0001-01-03T00:00:00Z" {
-//                Text("**Date**: \(formatDate(catchDate))")
-//            }
-//        }
     }
     
     private func formatDate(_ dateStr: String) -> String {
